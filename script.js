@@ -95,3 +95,80 @@ if (testimonialTrack && !testimonialTrack.dataset.loopReady) {
   });
   testimonialTrack.dataset.loopReady = "true";
 }
+
+const galleryStack = document.getElementById("gallery-stack");
+
+if (galleryStack) {
+  let stackCards = Array.from(galleryStack.children);
+  let autoCycle;
+  let touchStartX = 0;
+  let touchStartY = 0;
+
+  function randomRotation(index) {
+    const preset = [0, -3.5, 2.8, -2, 1.5];
+    return preset[index] ?? 0;
+  }
+
+  function renderGalleryStack() {
+    stackCards.forEach((card, index) => {
+      const depth = Math.min(index, 3);
+      const rotation = randomRotation(index);
+      const scale = 1 - depth * 0.04;
+      const offsetY = depth * 10;
+      const opacity = 1 - depth * 0.14;
+      card.style.zIndex = String(100 - index);
+      card.style.opacity = String(Math.max(opacity, 0));
+      card.style.filter = depth === 0 ? "none" : "saturate(0.92)";
+      card.style.transform = `translateY(${offsetY}px) scale(${scale}) rotate(${rotation}deg)`;
+      card.dataset.active = index === 0 ? "true" : "false";
+    });
+  }
+
+  function cycleGalleryStack() {
+    if (stackCards.length < 2) return;
+    const [first, ...rest] = stackCards;
+    stackCards = [...rest, first];
+    renderGalleryStack();
+  }
+
+  function startGalleryAutoplay() {
+    clearInterval(autoCycle);
+    autoCycle = setInterval(() => {
+      if (window.innerWidth <= 640) {
+        cycleGalleryStack();
+      }
+    }, 3200);
+  }
+
+  galleryStack.addEventListener("click", (event) => {
+    const topCard = stackCards[0];
+    if (topCard && topCard.contains(event.target)) {
+      cycleGalleryStack();
+      startGalleryAutoplay();
+    }
+  });
+
+  galleryStack.addEventListener("touchstart", (event) => {
+    const touch = event.touches[0];
+    touchStartX = touch.clientX;
+    touchStartY = touch.clientY;
+  }, { passive: true });
+
+  galleryStack.addEventListener("touchend", (event) => {
+    const touch = event.changedTouches[0];
+    const deltaX = touch.clientX - touchStartX;
+    const deltaY = touch.clientY - touchStartY;
+    if (Math.abs(deltaX) > 45 || Math.abs(deltaY) > 45) {
+      cycleGalleryStack();
+      startGalleryAutoplay();
+    }
+  }, { passive: true });
+
+  window.addEventListener("resize", () => {
+    renderGalleryStack();
+    startGalleryAutoplay();
+  });
+
+  renderGalleryStack();
+  startGalleryAutoplay();
+}

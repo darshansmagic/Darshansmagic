@@ -552,6 +552,48 @@ body.menu-open .menu-toggle span:nth-child(3) {
   gap: 1rem;
 }
 
+.gallery-stack-shell {
+  display: none;
+}
+
+.gallery-stack-frame {
+  position: relative;
+  width: min(100%, 340px);
+  margin: 0 auto;
+  height: 430px;
+}
+
+.gallery-stack {
+  position: relative;
+  width: 100%;
+  height: 100%;
+}
+
+.gallery-stack-card {
+  position: absolute;
+  inset: 0;
+  border-radius: 30px;
+  overflow: hidden;
+  background: var(--card);
+  border: 1px solid var(--line-light);
+  transform-origin: center center;
+  transition: transform 0.45s ease, opacity 0.45s ease, filter 0.45s ease;
+  touch-action: pan-y;
+}
+
+.gallery-stack-card img {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+}
+
+.gallery-stack-note {
+  margin-top: 1rem;
+  text-align: center;
+  color: var(--text-soft);
+  font-size: 0.88rem;
+}
+
 .gallery-card {
   position: relative;
   margin: 0;
@@ -749,8 +791,7 @@ body.menu-open .menu-toggle span:nth-child(3) {
 }
 
 @media (max-width: 1120px) {
-  .about-grid,
-  .footer-grid {
+  .about-grid {
     grid-template-columns: 1fr;
   }
 
@@ -883,12 +924,32 @@ body.menu-open .menu-toggle span:nth-child(3) {
     grid-template-columns: 1fr;
   }
 
-  .gallery-grid {
-    grid-auto-rows: 280px;
+  .services-grid {
+    display: block;
+    padding-bottom: 2rem;
   }
 
-  .gallery-card-large {
-    grid-row: span 1;
+  .service-card {
+    position: sticky;
+    top: calc(var(--header-height) + 0.75rem);
+    min-height: 240px;
+  }
+
+  .service-card + .service-card {
+    margin-top: -2.6rem;
+  }
+
+  .service-card:nth-child(1) { z-index: 1; }
+  .service-card:nth-child(2) { z-index: 2; }
+  .service-card:nth-child(3) { z-index: 3; }
+  .service-card:nth-child(4) { z-index: 4; }
+
+  .gallery-grid {
+    display: none;
+  }
+
+  .gallery-stack-shell {
+    display: block;
   }
 
   .about-photo-wrap {
@@ -909,7 +970,8 @@ body.menu-open .menu-toggle span:nth-child(3) {
   }
 
   .footer-grid {
-    gap: 1.5rem;
+    grid-template-columns: 1.2fr 0.8fr 0.9fr;
+    gap: 1.2rem;
   }
 
   .footer-logo {
