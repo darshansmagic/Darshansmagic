@@ -110,23 +110,39 @@ const cloudinaryUploadResults = document.getElementById("cloudinary-upload-resul
 const cloudinaryExistingFolder = document.getElementById("cloudinary-existing-folder");
 const cloudinaryActiveFolderLabel = document.getElementById("cloudinary-active-folder");
 const cloudinaryFolderList = document.getElementById("cloudinary-folder-list");
+const cloudinaryFolderChipList = document.getElementById("cloudinary-folder-chip-list");
+const cloudinaryFolderSheetList = document.getElementById("cloudinary-folder-sheet-list");
 const cloudinaryDeleteSelectedButton = document.getElementById("cloudinary-delete-selected");
+const cloudinaryDeleteSelectedMobileButton = document.getElementById("cloudinary-delete-selected-mobile");
 const cloudinaryUploadHereButton = document.getElementById("cloudinary-upload-here");
 const cloudinaryRefreshFolderButton = document.getElementById("cloudinary-refresh-folder");
 const cloudinaryCreateFolderButton = document.getElementById("cloudinary-create-folder");
 const cloudinaryExplorerUploadInput = document.getElementById("cloudinary-explorer-upload");
 const cloudinaryFolderBreadcrumbs = document.getElementById("cloudinary-folder-breadcrumbs");
 const cloudinaryFolderMeta = document.getElementById("cloudinary-folder-meta");
+const cloudinaryFolderSearchInput = document.getElementById("cloudinary-folder-search");
+const cloudinaryDropzone = document.getElementById("cloudinary-dropzone");
+const cloudinarySelectionBar = document.getElementById("cloudinary-selection-bar");
+const cloudinarySelectionCount = document.getElementById("cloudinary-selection-count");
+const cloudinarySelectAllButton = document.getElementById("cloudinary-select-all");
+const cloudinaryClearSelectionButton = document.getElementById("cloudinary-clear-selection");
 const cloudinaryUploadModal = document.getElementById("cloudinary-upload-modal");
 const cloudinaryOpenUploadModalButtons = [
   document.getElementById("cloudinary-open-upload-modal"),
   document.getElementById("cloudinary-open-upload-panel")
 ].filter(Boolean);
 const cloudinaryCloseUploadModalButton = document.getElementById("cloudinary-close-upload-modal");
+const cloudinaryFolderSheet = document.getElementById("cloudinary-folder-sheet");
+const cloudinaryOpenFolderSheetButtons = [
+  document.getElementById("cloudinary-toggle-folder-sheet"),
+  document.getElementById("cloudinary-toggle-folder-sheet-desktop")
+].filter(Boolean);
+const cloudinaryCloseFolderSheetButton = document.getElementById("cloudinary-close-folder-sheet");
 const CLOUDINARY_FOLDER_STORAGE_KEY = "darshans-magic-active-folder";
 let availableCloudinaryFolders = [];
 let activeCloudinaryFolder = "darshan-magic/gallery";
 let selectedCloudinaryPublicIds = new Set();
+let cloudinaryFolderFilter = "";
 
 function setupTestimonialLoop() {
   if (!testimonialTrack) return;
@@ -278,10 +294,21 @@ function normalizeCloudinaryFolder(input = "") {
 }
 
 function updateDeleteSelectedButton() {
-  if (!cloudinaryDeleteSelectedButton) return;
   const count = selectedCloudinaryPublicIds.size;
-  cloudinaryDeleteSelectedButton.disabled = count === 0;
-  cloudinaryDeleteSelectedButton.textContent = count ? `Delete Selected (${count})` : "Delete Selected";
+  if (cloudinaryDeleteSelectedButton) {
+    cloudinaryDeleteSelectedButton.disabled = count === 0;
+    cloudinaryDeleteSelectedButton.textContent = count ? `Delete Selected (${count})` : "Delete Selected";
+  }
+  if (cloudinaryDeleteSelectedMobileButton) {
+    cloudinaryDeleteSelectedMobileButton.disabled = count === 0;
+    cloudinaryDeleteSelectedMobileButton.textContent = count ? `Delete (${count})` : "Delete";
+  }
+  if (cloudinarySelectionBar) {
+    cloudinarySelectionBar.hidden = count === 0;
+  }
+  if (cloudinarySelectionCount) {
+    cloudinarySelectionCount.textContent = `${count} selected`;
+  }
 }
 
 function setCloudinaryFolderMeta(message = "") {
@@ -312,6 +339,18 @@ function renderCloudinaryBreadcrumbs(folderName = "") {
       }
     });
   });
+}
+
+function openCloudinaryFolderSheet() {
+  if (!cloudinaryFolderSheet) return;
+  cloudinaryFolderSheet.hidden = false;
+  body.classList.add("folder-sheet-open");
+}
+
+function closeCloudinaryFolderSheet() {
+  if (!cloudinaryFolderSheet) return;
+  cloudinaryFolderSheet.hidden = true;
+  body.classList.remove("folder-sheet-open");
 }
 
 function syncCloudinaryFolderInputs(folderName = "") {
@@ -364,6 +403,28 @@ function renderUploadResults(items) {
   });
 }
 
+function updatePhotoSelectionDom() {
+  if (!cloudinaryUploadResults) return;
+
+  Array.from(cloudinaryUploadResults.querySelectorAll(".upload-result-card")).forEach((card) => {
+    const publicId = String(card.getAttribute("data-public-id") || "").trim();
+    const checkbox = card.querySelector(".upload-result-checkbox");
+    const isSelected = selectedCloudinaryPublicIds.has(publicId);
+
+    if (checkbox) {
+      checkbox.checked = isSelected;
+    }
+
+    if (isSelected) {
+      card.setAttribute("data-selected", "true");
+    } else {
+      card.removeAttribute("data-selected");
+    }
+  });
+
+  updateDeleteSelectedButton();
+}
+
 function setActiveCloudinaryFolder(folderName = "") {
   activeCloudinaryFolder = folderName || "darshan-magic/gallery";
 
@@ -400,28 +461,54 @@ function closeCloudinaryUploadModal() {
 }
 
 function renderCloudinaryFolderList(folders = []) {
-  if (!cloudinaryFolderList) return;
+  const normalizedFilter = cloudinaryFolderFilter.trim().toLowerCase();
+  const visibleFolders = normalizedFilter
+    ? folders.filter((folder) => folder.toLowerCase().includes(normalizedFilter))
+    : folders;
 
-  if (!folders.length) {
-    cloudinaryFolderList.innerHTML = '<article class="upload-result-empty">No folders found yet.</article>';
-    return;
+  const listMarkup = visibleFolders.length
+    ? visibleFolders.map((folder) => `
+      <button class="upload-folder-item${folder === activeCloudinaryFolder ? " is-active" : ""}" type="button" data-folder="${escapeHtml(folder)}">
+        <span class="upload-folder-icon">Folder</span>
+        <span class="upload-folder-name">${escapeHtml(folder)}</span>
+      </button>
+    `).join("")
+    : '<article class="upload-result-empty">No matching folders.</article>';
+
+  const chipMarkup = visibleFolders.length
+    ? visibleFolders.map((folder) => `
+      <button class="admin-folder-chip${folder === activeCloudinaryFolder ? " is-active" : ""}" type="button" data-folder="${escapeHtml(folder)}">
+        ${escapeHtml(folder.split("/").pop() || folder)}
+      </button>
+    `).join("")
+    : '<article class="upload-result-empty">No matching folders.</article>';
+
+  [cloudinaryFolderList, cloudinaryFolderSheetList].forEach((container) => {
+    if (container) {
+      container.innerHTML = listMarkup;
+    }
+  });
+
+  if (cloudinaryFolderChipList) {
+    cloudinaryFolderChipList.innerHTML = chipMarkup;
   }
 
-  cloudinaryFolderList.innerHTML = folders.map((folder) => `
-    <button class="upload-folder-item${folder === activeCloudinaryFolder ? " is-active" : ""}" type="button" data-folder="${escapeHtml(folder)}">
-      <span class="upload-folder-icon">Folder</span>
-      <span class="upload-folder-name">${escapeHtml(folder)}</span>
-    </button>
-  `).join("");
-
-  Array.from(cloudinaryFolderList.querySelectorAll("[data-folder]")).forEach((button) => {
-    button.addEventListener("click", () => {
-      const folder = String(button.getAttribute("data-folder") || "").trim();
-      if (folder) {
-        loadCloudinaryFolderImages(folder);
-      }
+  const bindFolderButtons = (root) => {
+    if (!root) return;
+    Array.from(root.querySelectorAll("[data-folder]")).forEach((button) => {
+      button.addEventListener("click", () => {
+        const folder = String(button.getAttribute("data-folder") || "").trim();
+        if (folder) {
+          loadCloudinaryFolderImages(folder);
+          closeCloudinaryFolderSheet();
+        }
+      });
     });
-  });
+  };
+
+  bindFolderButtons(cloudinaryFolderList);
+  bindFolderButtons(cloudinaryFolderSheetList);
+  bindFolderButtons(cloudinaryFolderChipList);
 }
 
 function ensureCloudinaryFolderAvailable(folderName = "") {
@@ -437,6 +524,14 @@ function ensureCloudinaryFolderAvailable(folderName = "") {
 
   renderCloudinaryFolderList(availableCloudinaryFolders);
   return normalizedFolder;
+}
+
+function setFolderSearchValue(value = "") {
+  cloudinaryFolderFilter = String(value || "");
+  if (cloudinaryFolderSearchInput && cloudinaryFolderSearchInput.value !== cloudinaryFolderFilter) {
+    cloudinaryFolderSearchInput.value = cloudinaryFolderFilter;
+  }
+  renderCloudinaryFolderList(availableCloudinaryFolders);
 }
 
 async function getCloudinaryConfig() {
@@ -485,6 +580,8 @@ async function loadCloudinaryFolders() {
     const payload = await response.json().catch(() => ({}));
 
     if (!response.ok || !Array.isArray(payload.folders) || !payload.folders.length) {
+      availableCloudinaryFolders = Array.from(cloudinaryExistingFolder.options).map((option) => option.value).filter(Boolean);
+      renderCloudinaryFolderList(availableCloudinaryFolders);
       return;
     }
 
@@ -524,6 +621,7 @@ async function loadCloudinaryFolderImages(folderName) {
 
     setCloudinaryFolderMeta(`${payload.images.length} photo${payload.images.length === 1 ? "" : "s"} in this folder.`);
     renderUploadResults(payload.images);
+    updatePhotoSelectionDom();
   } catch (error) {
     setCloudinaryFolderMeta("We could not load this folder right now.");
     cloudinaryUploadResults.innerHTML = `<article class="upload-result-empty">${escapeHtml(error.message || "We could not load this folder right now.")}</article>`;
@@ -549,6 +647,52 @@ async function deleteSelectedCloudinaryImages() {
   }
 
   return payload;
+}
+
+async function handleDeleteSelectedPhotos() {
+  if (!selectedCloudinaryPublicIds.size) return;
+
+  const confirmed = typeof window !== "undefined" && window.confirm
+    ? window.confirm(`Delete ${selectedCloudinaryPublicIds.size} selected photo${selectedCloudinaryPublicIds.size === 1 ? "" : "s"} from ${activeCloudinaryFolder}?`)
+    : true;
+
+  if (!confirmed) return;
+
+  const desktopLabel = cloudinaryDeleteSelectedButton ? cloudinaryDeleteSelectedButton.textContent : "";
+  const mobileLabel = cloudinaryDeleteSelectedMobileButton ? cloudinaryDeleteSelectedMobileButton.textContent : "";
+
+  if (cloudinaryDeleteSelectedButton) {
+    cloudinaryDeleteSelectedButton.disabled = true;
+    cloudinaryDeleteSelectedButton.textContent = "Deleting...";
+  }
+  if (cloudinaryDeleteSelectedMobileButton) {
+    cloudinaryDeleteSelectedMobileButton.disabled = true;
+    cloudinaryDeleteSelectedMobileButton.textContent = "Deleting...";
+  }
+
+  try {
+    await deleteSelectedCloudinaryImages();
+    if (cloudinaryUploadStatus) {
+      cloudinaryUploadStatus.textContent = "Selected photos deleted successfully.";
+      cloudinaryUploadStatus.dataset.state = "success";
+    }
+    selectedCloudinaryPublicIds = new Set();
+    await loadCloudinaryFolderImages(activeCloudinaryFolder);
+    await loadCloudinaryFolders();
+  } catch (error) {
+    if (cloudinaryUploadStatus) {
+      cloudinaryUploadStatus.textContent = error.message || "We could not delete the selected photos.";
+      cloudinaryUploadStatus.dataset.state = "error";
+    }
+  } finally {
+    if (cloudinaryDeleteSelectedButton) {
+      cloudinaryDeleteSelectedButton.textContent = desktopLabel || "Delete Selected";
+    }
+    if (cloudinaryDeleteSelectedMobileButton) {
+      cloudinaryDeleteSelectedMobileButton.textContent = mobileLabel || "Delete";
+    }
+    updateDeleteSelectedButton();
+  }
 }
 
 async function uploadSinglePhoto(file, config, folderName) {
@@ -994,9 +1138,21 @@ cloudinaryOpenUploadModalButtons.forEach((button) => {
   });
 });
 
+cloudinaryOpenFolderSheetButtons.forEach((button) => {
+  button.addEventListener("click", () => {
+    openCloudinaryFolderSheet();
+  });
+});
+
 if (cloudinaryCloseUploadModalButton) {
   cloudinaryCloseUploadModalButton.addEventListener("click", () => {
     closeCloudinaryUploadModal();
+  });
+}
+
+if (cloudinaryCloseFolderSheetButton) {
+  cloudinaryCloseFolderSheetButton.addEventListener("click", () => {
+    closeCloudinaryFolderSheet();
   });
 }
 
@@ -1008,9 +1164,20 @@ if (cloudinaryUploadModal) {
   });
 }
 
+if (cloudinaryFolderSheet) {
+  Array.from(cloudinaryFolderSheet.querySelectorAll("[data-close-folder-sheet]")).forEach((element) => {
+    element.addEventListener("click", () => {
+      closeCloudinaryFolderSheet();
+    });
+  });
+}
+
 window.addEventListener("keydown", (event) => {
   if (event.key === "Escape" && cloudinaryUploadModal && !cloudinaryUploadModal.hidden) {
     closeCloudinaryUploadModal();
+  }
+  if (event.key === "Escape" && cloudinaryFolderSheet && !cloudinaryFolderSheet.hidden) {
+    closeCloudinaryFolderSheet();
   }
 });
 
@@ -1048,34 +1215,90 @@ if (cloudinaryCreateFolderButton) {
 
 if (cloudinaryDeleteSelectedButton) {
   cloudinaryDeleteSelectedButton.addEventListener("click", async () => {
-    if (!selectedCloudinaryPublicIds.size) return;
+    await handleDeleteSelectedPhotos();
+  });
+}
 
-    const confirmed = typeof window !== "undefined" && window.confirm
-      ? window.confirm(`Delete ${selectedCloudinaryPublicIds.size} selected photo${selectedCloudinaryPublicIds.size === 1 ? "" : "s"} from ${activeCloudinaryFolder}?`)
-      : true;
+if (cloudinaryDeleteSelectedMobileButton) {
+  cloudinaryDeleteSelectedMobileButton.addEventListener("click", async () => {
+    await handleDeleteSelectedPhotos();
+  });
+}
 
-    if (!confirmed) return;
+if (cloudinarySelectAllButton) {
+  cloudinarySelectAllButton.addEventListener("click", () => {
+    Array.from(cloudinaryUploadResults?.querySelectorAll(".upload-result-card[data-public-id]") || []).forEach((card) => {
+      const publicId = String(card.getAttribute("data-public-id") || "").trim();
+      if (publicId) {
+        selectedCloudinaryPublicIds.add(publicId);
+      }
+    });
+    updatePhotoSelectionDom();
+  });
+}
 
-    const originalLabel = cloudinaryDeleteSelectedButton.textContent;
-    cloudinaryDeleteSelectedButton.disabled = true;
-    cloudinaryDeleteSelectedButton.textContent = "Deleting...";
+if (cloudinaryClearSelectionButton) {
+  cloudinaryClearSelectionButton.addEventListener("click", () => {
+    selectedCloudinaryPublicIds = new Set();
+    updatePhotoSelectionDom();
+  });
+}
+
+if (cloudinaryFolderSearchInput) {
+  cloudinaryFolderSearchInput.addEventListener("input", (event) => {
+    setFolderSearchValue(event.target.value || "");
+  });
+}
+
+if (cloudinaryDropzone && cloudinaryExplorerUploadInput) {
+  cloudinaryDropzone.addEventListener("click", () => {
+    cloudinaryExplorerUploadInput.click();
+  });
+
+  cloudinaryDropzone.addEventListener("keydown", (event) => {
+    if (event.key === "Enter" || event.key === " ") {
+      event.preventDefault();
+      cloudinaryExplorerUploadInput.click();
+    }
+  });
+
+  ["dragenter", "dragover"].forEach((eventName) => {
+    cloudinaryDropzone.addEventListener(eventName, (event) => {
+      event.preventDefault();
+      cloudinaryDropzone.setAttribute("data-dragging", "true");
+    });
+  });
+
+  ["dragleave", "dragend", "drop"].forEach((eventName) => {
+    cloudinaryDropzone.addEventListener(eventName, (event) => {
+      event.preventDefault();
+      if (eventName !== "drop") {
+        cloudinaryDropzone.removeAttribute("data-dragging");
+      }
+    });
+  });
+
+  cloudinaryDropzone.addEventListener("drop", async (event) => {
+    cloudinaryDropzone.removeAttribute("data-dragging");
+    const files = Array.from(event.dataTransfer?.files || []).filter((file) => String(file.type || "").startsWith("image/"));
+    if (!files.length) return;
+
+    if (cloudinaryUploadStatus) {
+      cloudinaryUploadStatus.textContent = `Uploading photos to ${activeCloudinaryFolder}...`;
+      cloudinaryUploadStatus.dataset.state = "";
+    }
 
     try {
-      await deleteSelectedCloudinaryImages();
+      const result = await performCloudinaryUpload(files, activeCloudinaryFolder);
       if (cloudinaryUploadStatus) {
-        cloudinaryUploadStatus.textContent = "Selected photos deleted successfully.";
+        cloudinaryUploadStatus.textContent = `${result.uploaded.length} photo${result.uploaded.length === 1 ? "" : "s"} uploaded successfully to ${result.folderName}.`;
         cloudinaryUploadStatus.dataset.state = "success";
       }
-      await loadCloudinaryFolderImages(activeCloudinaryFolder);
-      await loadCloudinaryFolders();
     } catch (error) {
       if (cloudinaryUploadStatus) {
-        cloudinaryUploadStatus.textContent = error.message || "We could not delete the selected photos.";
+        cloudinaryUploadStatus.textContent = error.message || "We could not upload your photos right now.";
         cloudinaryUploadStatus.dataset.state = "error";
       }
-    } finally {
-      cloudinaryDeleteSelectedButton.textContent = originalLabel;
-      updateDeleteSelectedButton();
     }
   });
 }

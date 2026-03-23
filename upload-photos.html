@@ -1,163 +1,170 @@
 <!DOCTYPE html>
 <html lang="en">
   <head>
-  <meta charset="UTF-8">
-  <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>Upload Photos | Darshan's Magic</title>
-  <meta name="description" content="Upload event and performance photos to Cloudinary for Darshan's Magic.">
-  <meta name="robots" content="noindex,nofollow">
-  <link rel="preconnect" href="https://fonts.googleapis.com">
-  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&family=Playfair+Display:wght@600;700;800&display=swap" rel="stylesheet">
-  <link rel="stylesheet" href="styles.css">
-</head>
-<body>
-  <div class="site-shell">
-    <header class="site-header is-scrolled" id="site-header">
-      <div class="container header-bar">
-        <a class="brand" href="index.html" aria-label="Darshan's Magic home">
-          <img class="brand-logo" src="assets/logo.png" alt="Darshan's Magic logo">
-        </a>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Photo Uploads | Darshan's Magic</title>
+    <meta name="description" content="Admin photo uploader and folder manager for Cloudinary.">
+    <meta name="robots" content="noindex,nofollow">
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="styles.css">
+  </head>
+  <body class="admin-upload-page">
+    <div class="admin-shell">
+      <header class="admin-topbar">
+        <div class="admin-topbar-main">
+          <a class="admin-brand" href="index.html" aria-label="Darshan's Magic home">
+            <img class="admin-brand-logo" src="assets/logo.png" alt="Darshan's Magic logo">
+            <div class="admin-brand-copy">
+              <strong>Photo Uploads</strong>
+              <span>Cloudinary admin</span>
+            </div>
+          </a>
 
-        <nav class="site-nav" aria-label="Primary navigation">
-          <a href="index.html#services">Services</a>
-          <a href="index.html#about">About</a>
-          <a href="index.html#gallery">Performance</a>
-          <a href="testimonials.html">Testimonials</a>
-          <a href="tel:+61420786767">Contact</a>
-        </nav>
+          <div class="admin-topbar-actions">
+            <button class="button button-secondary admin-icon-button" id="cloudinary-toggle-folder-sheet" type="button">Folders</button>
+            <button class="button button-primary" id="cloudinary-open-upload-modal" type="button">Upload</button>
+          </div>
+        </div>
+      </header>
 
-        <button class="button button-primary header-cta" id="cloudinary-open-upload-modal" type="button">Upload Photos</button>
+      <main class="admin-main">
+        <section class="admin-toolbar-card">
+          <div class="admin-toolbar-copy">
+            <h1>Photo Uploads</h1>
+            <p>Choose a folder, upload from your phone, and manage photos quickly.</p>
+          </div>
+
+          <div class="admin-toolbar-actions">
+            <button class="button button-primary" id="cloudinary-open-upload-panel" type="button">Upload Photos</button>
+            <button class="button button-secondary" id="cloudinary-refresh-folder" type="button">Refresh</button>
+            <button class="button button-secondary" id="cloudinary-create-folder" type="button">New Folder</button>
+          </div>
+        </section>
+
+        <section class="admin-folder-strip">
+          <div class="admin-folder-strip-head">
+            <label class="admin-search" for="cloudinary-folder-search">
+              <span>Search folders</span>
+              <input id="cloudinary-folder-search" type="search" placeholder="Search folders">
+            </label>
+            <button class="button button-secondary admin-desktop-folder-toggle" id="cloudinary-toggle-folder-sheet-desktop" type="button">All Folders</button>
+          </div>
+
+          <div class="admin-folder-chips" id="cloudinary-folder-chip-list">
+            <article class="upload-result-empty">Loading folders...</article>
+          </div>
+        </section>
+
+        <section class="admin-workspace">
+          <aside class="admin-sidebar">
+            <div class="admin-sidebar-head">
+              <p class="admin-sidebar-title">Folders</p>
+            </div>
+            <div class="upload-folder-list admin-folder-list" id="cloudinary-folder-list">
+              <article class="upload-result-empty">Loading folders...</article>
+            </div>
+          </aside>
+
+          <div class="admin-content">
+            <section class="admin-context-card">
+              <div class="admin-context-copy">
+                <p class="admin-section-label">Selected folder</p>
+                <p class="upload-folder-current">Viewing folder: <strong id="cloudinary-active-folder">darshan-magic/gallery</strong></p>
+                <div class="upload-folder-breadcrumbs" id="cloudinary-folder-breadcrumbs"></div>
+                <p class="upload-folder-meta" id="cloudinary-folder-meta">Loading folder contents...</p>
+              </div>
+
+              <div class="admin-context-actions">
+                <button class="button button-primary" id="cloudinary-upload-here" type="button">Upload Here</button>
+                <button class="button button-danger" id="cloudinary-delete-selected" type="button" disabled>Delete Selected</button>
+              </div>
+            </section>
+
+            <section class="admin-upload-dropzone" id="cloudinary-dropzone" tabindex="0" role="button" aria-label="Upload photos to selected folder">
+              <input id="cloudinary-explorer-upload" type="file" accept="image/*" multiple hidden>
+              <div class="admin-upload-dropzone-icon">+</div>
+              <div class="admin-upload-dropzone-copy">
+                <strong>Tap to upload photos</strong>
+                <span>or drag and drop</span>
+              </div>
+            </section>
+
+            <section class="admin-grid-panel">
+              <div class="upload-results-grid admin-photo-grid" id="cloudinary-upload-results">
+                <article class="upload-result-empty">
+                  Loading folder photos...
+                </article>
+              </div>
+            </section>
+          </div>
+        </section>
+      </main>
+
+      <div class="admin-selection-bar" id="cloudinary-selection-bar" hidden>
+        <div class="admin-selection-copy">
+          <strong id="cloudinary-selection-count">0 selected</strong>
+        </div>
+        <div class="admin-selection-actions">
+          <button class="button button-secondary" id="cloudinary-select-all" type="button">Select All</button>
+          <button class="button button-secondary" id="cloudinary-clear-selection" type="button">Clear</button>
+          <button class="button button-danger" id="cloudinary-delete-selected-mobile" type="button" disabled>Delete</button>
+        </div>
       </div>
-    </header>
 
-    <main>
-      <section class="section cta-section testimonial-form-section">
-        <div class="container">
-          <div class="cta-panel" data-reveal>
-            <div class="cta-layout upload-layout">
-              <div class="cta-copy upload-copy">
-                <p class="eyebrow">Admin Uploads</p>
-                <h2>Upload performance photos from any device.</h2>
-                <p>Mobile-first admin uploader for Cloudinary folders.</p>
-                <div class="upload-note-list">
-                  <p>Pick a folder below, then upload from the popup.</p>
-                </div>
-                <div class="upload-hero-actions">
-                  <button class="button button-primary" id="cloudinary-open-upload-panel" type="button">Open Upload</button>
-                </div>
-              </div>
-            </div>
+      <div class="admin-folder-sheet" id="cloudinary-folder-sheet" hidden>
+        <div class="admin-folder-sheet-backdrop" data-close-folder-sheet></div>
+        <div class="admin-folder-sheet-panel" role="dialog" aria-modal="true" aria-labelledby="cloudinary-folder-sheet-title">
+          <div class="admin-folder-sheet-head">
+            <h2 id="cloudinary-folder-sheet-title">Folders</h2>
+            <button class="admin-sheet-close" id="cloudinary-close-folder-sheet" type="button">Close</button>
           </div>
-
-          <div class="upload-results-shell" data-reveal>
-            <div class="section-intro upload-results-intro">
-              <p class="eyebrow">Folder Explorer</p>
-              <h2>Browse folders and manage photos.</h2>
-              <p>This admin-only area works like a simple file explorer: choose a folder, upload into it, or delete selected photos.</p>
-            </div>
-
-            <div class="upload-explorer-shell">
-              <aside class="upload-folder-pane">
-                <div class="upload-pane-header">
-                  <p class="upload-pane-label">Folders</p>
-                </div>
-                <div class="upload-folder-list" id="cloudinary-folder-list">
-                  <article class="upload-result-empty">Loading folders...</article>
-                </div>
-              </aside>
-
-              <div class="upload-files-pane">
-                <div class="upload-pane-header upload-pane-header-wide">
-                  <div>
-                    <p class="upload-pane-label">Selected Folder</p>
-                    <p class="upload-folder-current">Viewing folder: <strong id="cloudinary-active-folder">darshan-magic/gallery</strong></p>
-                    <div class="upload-folder-breadcrumbs" id="cloudinary-folder-breadcrumbs"></div>
-                    <p class="upload-folder-meta" id="cloudinary-folder-meta">Loading folder contents...</p>
-                  </div>
-                  <div class="upload-pane-actions">
-                    <button class="button button-secondary" id="cloudinary-refresh-folder" type="button">Refresh</button>
-                    <button class="button button-secondary" id="cloudinary-create-folder" type="button">New Folder</button>
-                    <button class="button button-primary" id="cloudinary-upload-here" type="button">Upload Here</button>
-                    <button class="button button-danger" id="cloudinary-delete-selected" type="button" disabled>Delete Selected</button>
-                  </div>
-                </div>
-
-                <input id="cloudinary-explorer-upload" type="file" accept="image/*" multiple hidden>
-
-                <div class="upload-results-grid" id="cloudinary-upload-results">
-                  <article class="upload-result-empty">
-                    Loading folder photos...
-                  </article>
-                </div>
-              </div>
-            </div>
+          <div class="upload-folder-list admin-folder-sheet-list" id="cloudinary-folder-sheet-list">
+            <article class="upload-result-empty">Loading folders...</article>
           </div>
         </div>
-      </section>
-    </main>
+      </div>
 
-    <div class="upload-modal" id="cloudinary-upload-modal" hidden>
-      <div class="upload-modal-backdrop" data-close-upload-modal></div>
-      <div class="upload-modal-dialog" role="dialog" aria-modal="true" aria-labelledby="cloudinary-upload-modal-title">
-        <div class="upload-modal-header">
-          <div>
-            <p class="upload-pane-label">Quick Upload</p>
-            <h3 id="cloudinary-upload-modal-title">Upload to a folder</h3>
+      <div class="upload-modal" id="cloudinary-upload-modal" hidden>
+        <div class="upload-modal-backdrop" data-close-upload-modal></div>
+        <div class="upload-modal-dialog admin-upload-modal-dialog" role="dialog" aria-modal="true" aria-labelledby="cloudinary-upload-modal-title">
+          <div class="upload-modal-header">
+            <div>
+              <p class="upload-pane-label">Upload</p>
+              <h3 id="cloudinary-upload-modal-title">Add photos</h3>
+            </div>
+            <button class="upload-modal-close" id="cloudinary-close-upload-modal" type="button" aria-label="Close upload modal">Close</button>
           </div>
-          <button class="upload-modal-close" id="cloudinary-close-upload-modal" type="button" aria-label="Close upload modal">Close</button>
+
+          <form class="booking-form upload-form admin-upload-form" id="cloudinary-upload-form">
+            <div class="booking-grid">
+              <label class="field field-full">
+                <span>Folder</span>
+                <select name="existingFolder" id="cloudinary-existing-folder">
+                  <option value="darshan-magic/gallery">darshan-magic/gallery</option>
+                </select>
+              </label>
+
+              <label class="field field-full">
+                <span>New folder</span>
+                <input type="text" name="newFolderName" placeholder="Birthday Party or darshan-magic/events/birthday-party">
+              </label>
+
+              <label class="field field-full">
+                <span>Photos</span>
+                <input type="file" name="photos" id="cloudinary-photos" accept="image/*" multiple required>
+              </label>
+            </div>
+
+            <button class="button button-primary booking-submit" id="upload-form" type="submit">Upload Photos</button>
+            <p class="booking-status admin-upload-status" id="cloudinary-upload-status" role="status" aria-live="polite"></p>
+          </form>
         </div>
-
-        <form class="booking-form upload-form" id="cloudinary-upload-form">
-          <div class="booking-grid">
-            <label class="field field-full">
-              <span>Choose existing folder</span>
-              <select name="existingFolder" id="cloudinary-existing-folder">
-                <option value="darshan-magic/gallery">darshan-magic/gallery</option>
-              </select>
-            </label>
-
-            <label class="field field-full">
-              <span>Or create new folder</span>
-              <input type="text" name="newFolderName" placeholder="Birthday Party or darshan-magic/events/birthday-party">
-            </label>
-
-            <label class="field field-full">
-              <span>Select photos</span>
-              <input type="file" name="photos" id="cloudinary-photos" accept="image/*" multiple required>
-            </label>
-          </div>
-
-          <button class="button button-primary booking-submit" id="upload-form" type="submit">Upload Photos</button>
-          <p class="booking-status" id="cloudinary-upload-status" role="status" aria-live="polite"></p>
-        </form>
       </div>
     </div>
 
-    <footer class="site-footer">
-      <div class="container footer-grid">
-        <div class="footer-brand">
-          <img class="footer-logo" src="assets/logo.png" alt="Darshan's Magic logo">
-          <p>Premium live entertainment for weddings, private events, birthdays, engagement celebrations, and corporate occasions across Sydney.</p>
-        </div>
-
-        <div class="footer-column footer-review-column">
-          <h3>Leave a Review</h3>
-          <p>Seen Darshan perform at your event?<br>Share a few kind words with us.</p>
-          <a class="footer-review-link" href="leave-a-testimonial.html">Share Your Experience</a>
-        </div>
-
-        <div class="footer-column">
-          <h3>Contact</h3>
-          <span>Sydney, Australia</span>
-          <a href="mailto:darsaranya@gmail.com">darsaranya@gmail.com</a>
-          <a href="tel:+61420786767">+61 420 786 767</a>
-          <a href="https://www.facebook.com/darshanmagic" target="_blank" rel="noreferrer">Facebook</a>
-        </div>
-      </div>
-    </footer>
-  </div>
-
-  <script src="script.js"></script>
-</body>
+    <script src="script.js"></script>
+  </body>
 </html>
