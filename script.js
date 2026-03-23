@@ -187,6 +187,13 @@ function createGalleryStackCard(url, alt) {
   return article;
 }
 
+function createGalleryEmptyState(message) {
+  const figure = document.createElement("figure");
+  figure.className = "gallery-card gallery-card-empty";
+  figure.textContent = message;
+  return figure;
+}
+
 function escapeHtml(value = "") {
   return String(value)
     .replace(/&/g, "&amp;")
@@ -339,13 +346,26 @@ async function loadGalleryImages() {
     const payload = await response.json().catch(() => ({}));
 
     if (!response.ok || !Array.isArray(payload.images) || !payload.images.length) {
+      if (galleryGrid) {
+        galleryGrid.innerHTML = "";
+        galleryGrid.appendChild(createGalleryEmptyState("Upload photos in Cloudinary and they will appear here."));
+      }
       return;
     }
 
-    const items = payload.images.slice(0, 5).map((item, index) => ({
+    const sourceItems = payload.images.slice(0, 6).map((item, index) => ({
       url: item.secure_url,
       alt: `Darshan's Magic performance photo ${index + 1}`
     }));
+    const items = [];
+
+    while (items.length < 6 && sourceItems.length) {
+      sourceItems.forEach((item) => {
+        if (items.length < 6) {
+          items.push(item);
+        }
+      });
+    }
 
     if (galleryGrid) {
       galleryGrid.innerHTML = "";
@@ -361,7 +381,10 @@ async function loadGalleryImages() {
       });
     }
   } catch {
-    // Keep the gallery empty if Cloudinary images cannot be loaded.
+    if (galleryGrid) {
+      galleryGrid.innerHTML = "";
+      galleryGrid.appendChild(createGalleryEmptyState("We could not load Cloudinary photos right now."));
+    }
   }
 }
 
