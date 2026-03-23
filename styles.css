@@ -915,6 +915,14 @@ body.menu-open .menu-toggle span:nth-child(3) {
   padding-top: calc(var(--header-height) + 2.5rem);
 }
 
+.testimonial-stack-layout {
+  align-items: start;
+}
+
+.testimonial-stack-card {
+  position: relative;
+}
+
 .thank-you-section {
   padding-top: calc(var(--header-height) + 2.5rem);
 }
@@ -1241,6 +1249,26 @@ body.menu-open .menu-toggle span:nth-child(3) {
 
   .cta-panel {
     padding: 3.5rem 1.2rem;
+  }
+
+  .testimonial-stack-layout {
+    display: block;
+    padding-bottom: 1rem;
+  }
+
+  .testimonial-stack-card {
+    position: sticky;
+    top: calc(var(--header-height) + 0.75rem);
+  }
+
+  .testimonial-stack-copy {
+    padding: 1.25rem 0.2rem 0.3rem;
+    z-index: 1;
+  }
+
+  .testimonial-stack-form {
+    margin-top: -1.35rem;
+    z-index: 2;
   }
 
   .booking-grid {
