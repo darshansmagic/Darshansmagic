@@ -682,6 +682,13 @@ body.menu-open .menu-toggle span:nth-child(3) {
   height: 100%;
 }
 
+.testimonial-rating {
+  margin-bottom: 0.9rem;
+  color: #c9a66b;
+  letter-spacing: 0.14em;
+  font-size: 0.88rem;
+}
+
 .testimonial-copy {
   flex: 1;
   margin-bottom: 1.2rem;
@@ -694,6 +701,21 @@ body.menu-open .menu-toggle span:nth-child(3) {
   display: block;
   color: var(--text-on-light);
   font-size: 1rem;
+}
+
+.testimonial-meta span {
+  display: block;
+  margin-top: 0.35rem;
+  color: var(--text-soft);
+  font-size: 0.85rem;
+  letter-spacing: 0.06em;
+  text-transform: uppercase;
+}
+
+.testimonial-actions {
+  display: flex;
+  justify-content: center;
+  margin-top: 0.6rem;
 }
 
 @keyframes testimonial-marquee {
@@ -864,6 +886,10 @@ body.menu-open .menu-toggle span:nth-child(3) {
   max-width: 760px;
   margin: 0 auto;
   text-align: center;
+}
+
+.testimonial-form-section {
+  padding-top: calc(var(--header-height) + 2.5rem);
 }
 
 .thank-you-section {

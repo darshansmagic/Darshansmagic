@@ -86,19 +86,91 @@ if ("IntersectionObserver" in window && countElements.length) {
 
 const testimonialTrack = document.getElementById("testimonial-track");
 
-if (testimonialTrack && !testimonialTrack.dataset.loopReady) {
+const galleryStack = document.getElementById("gallery-stack");
+const bookingForm = document.getElementById("booking-form");
+const bookingStatus = document.getElementById("booking-status");
+const testimonialForm = document.getElementById("testimonial-form");
+const testimonialStatus = document.getElementById("testimonial-status");
+
+function setupTestimonialLoop() {
+  if (!testimonialTrack) return;
+
+  Array.from(testimonialTrack.querySelectorAll('[aria-hidden="true"]')).forEach((clone) => clone.remove());
+
   const originals = Array.from(testimonialTrack.children);
   originals.forEach((card) => {
     const clone = card.cloneNode(true);
     clone.setAttribute("aria-hidden", "true");
     testimonialTrack.appendChild(clone);
   });
+
   testimonialTrack.dataset.loopReady = "true";
 }
 
-const galleryStack = document.getElementById("gallery-stack");
-const bookingForm = document.getElementById("booking-form");
-const bookingStatus = document.getElementById("booking-status");
+function createTestimonialCard({ customer_name: customerName, testimonial, event_type: eventType, rating }) {
+  const article = document.createElement("article");
+  article.className = "testimonial-card";
+
+  const content = document.createElement("div");
+  content.className = "testimonial-card-content";
+
+  if (rating) {
+    const stars = document.createElement("p");
+    stars.className = "testimonial-rating";
+    stars.textContent = "★".repeat(rating);
+    content.appendChild(stars);
+  }
+
+  const copy = document.createElement("p");
+  copy.className = "testimonial-copy";
+  copy.textContent = testimonial;
+  content.appendChild(copy);
+
+  const meta = document.createElement("div");
+  meta.className = "testimonial-meta";
+
+  const strong = document.createElement("strong");
+  strong.textContent = customerName;
+  meta.appendChild(strong);
+
+  if (eventType) {
+    const span = document.createElement("span");
+    span.className = "testimonial-event";
+    span.textContent = eventType;
+    meta.appendChild(span);
+  }
+
+  content.appendChild(meta);
+  article.appendChild(content);
+
+  return article;
+}
+
+async function loadTestimonials() {
+  if (!testimonialTrack) return;
+
+  try {
+    const response = await fetch("/api/testimonials", {
+      headers: {
+        Accept: "application/json"
+      }
+    });
+    const payload = await response.json().catch(() => ({}));
+
+    if (!response.ok || !Array.isArray(payload.testimonials) || !payload.testimonials.length) {
+      setupTestimonialLoop();
+      return;
+    }
+
+    testimonialTrack.innerHTML = "";
+    payload.testimonials.forEach((item) => {
+      testimonialTrack.appendChild(createTestimonialCard(item));
+    });
+    setupTestimonialLoop();
+  } catch {
+    setupTestimonialLoop();
+  }
+}
 
 if (galleryStack) {
   let stackCards = Array.from(galleryStack.children);
@@ -223,3 +295,54 @@ if (bookingForm) {
     }
   });
 }
+
+if (testimonialForm) {
+  testimonialForm.addEventListener("submit", async (event) => {
+    event.preventDefault();
+
+    const submitButton = testimonialForm.querySelector('button[type="submit"]');
+    const originalButtonLabel = submitButton ? submitButton.textContent : "";
+    const formData = new FormData(testimonialForm);
+
+    if (testimonialStatus) {
+      testimonialStatus.textContent = "Sending your testimonial...";
+      testimonialStatus.dataset.state = "";
+    }
+
+    if (submitButton) {
+      submitButton.disabled = true;
+      submitButton.textContent = "Sending...";
+    }
+
+    try {
+      const response = await fetch(testimonialForm.action, {
+        method: "POST",
+        headers: {
+          "Content-Type": "application/json"
+        },
+        body: JSON.stringify(Object.fromEntries(formData.entries()))
+      });
+
+      const payload = await response.json().catch(() => ({}));
+
+      if (!response.ok) {
+        throw new Error(payload.error || "Something went wrong.");
+      }
+
+      testimonialForm.reset();
+      window.location.href = "testimonial-thank-you.html";
+    } catch (error) {
+      if (testimonialStatus) {
+        testimonialStatus.textContent = error.message || "We could not send your testimonial right now. Please try again.";
+        testimonialStatus.dataset.state = "error";
+      }
+    } finally {
+      if (submitButton) {
+        submitButton.disabled = false;
+        submitButton.textContent = originalButtonLabel;
+      }
+    }
+  });
+}
+
+loadTestimonials();
