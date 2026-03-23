@@ -962,7 +962,7 @@ body.menu-open .menu-toggle span:nth-child(3) {
 
 .footer-grid {
   display: grid;
-  grid-template-columns: minmax(0, 1fr) auto auto;
+  grid-template-columns: repeat(3, minmax(0, 1fr));
   gap: 1.8rem;
   align-items: start;
 }
@@ -1009,6 +1009,7 @@ body.menu-open .menu-toggle span:nth-child(3) {
 .footer-review-column {
   max-width: 270px;
   justify-self: center;
+  text-align: center;
 }
 
 .footer-grid > .footer-column:last-child {
