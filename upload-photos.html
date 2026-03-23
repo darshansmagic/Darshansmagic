@@ -40,10 +40,15 @@
         <section class="admin-workspace">
           <aside class="admin-sidebar">
             <div class="admin-sidebar-head">
-              <p class="admin-sidebar-title">Folders</p>
+              <p class="admin-sidebar-kicker">Library</p>
+              <h2 class="admin-sidebar-title">Folders</h2>
               <label class="admin-search" for="cloudinary-folder-search">
                 <input id="cloudinary-folder-search" type="search" placeholder="Search folders">
               </label>
+            </div>
+            <div class="admin-sidebar-body">
+              <button class="admin-root-link" type="button" data-folder="darshan-magic/gallery">All folders</button>
+              <div class="admin-sidebar-divider"></div>
             </div>
             <div class="upload-folder-list admin-folder-list" id="cloudinary-folder-list">
               <article class="upload-result-empty">Loading folders...</article>
@@ -53,6 +58,7 @@
           <div class="admin-content">
             <section class="admin-content-toolbar">
               <div class="admin-context-copy">
+                <p class="admin-section-label">Current location</p>
                 <div class="upload-folder-breadcrumbs" id="cloudinary-folder-breadcrumbs"></div>
                 <p class="upload-folder-current"><strong id="cloudinary-active-folder">darshan-magic/gallery</strong></p>
                 <p class="upload-folder-meta" id="cloudinary-folder-meta">Loading folder contents...</p>
@@ -66,21 +72,28 @@
               </div>
             </section>
 
-            <section class="admin-upload-dropzone" id="cloudinary-dropzone" tabindex="0" role="button" aria-label="Upload photos to selected folder">
-              <input id="cloudinary-explorer-upload" type="file" accept="image/*" multiple hidden>
-              <div class="admin-upload-dropzone-icon">+</div>
-              <div class="admin-upload-dropzone-copy">
-                <strong>Tap to upload photos</strong>
-                <span>or drag and drop</span>
-              </div>
-            </section>
+            <section class="admin-content-body">
+              <section class="admin-upload-panel">
+                <section class="admin-upload-dropzone" id="cloudinary-dropzone" tabindex="0" role="button" aria-label="Upload photos to selected folder">
+                  <input id="cloudinary-explorer-upload" type="file" accept="image/*" multiple hidden>
+                  <div class="admin-upload-dropzone-icon">+</div>
+                  <div class="admin-upload-dropzone-copy">
+                    <strong>Tap to upload photos</strong>
+                    <span>or drag and drop</span>
+                  </div>
+                </section>
+              </section>
 
-            <section class="admin-grid-panel">
-              <div class="upload-results-grid admin-photo-grid" id="cloudinary-upload-results">
-                <article class="upload-result-empty">
-                  Loading folder photos...
-                </article>
-              </div>
+              <section class="admin-grid-panel">
+                <div class="admin-grid-header">
+                  <p class="admin-section-label">Photos</p>
+                </div>
+                <div class="upload-results-grid admin-photo-grid" id="cloudinary-upload-results">
+                  <article class="upload-result-empty">
+                    Loading folder photos...
+                  </article>
+                </div>
+              </section>
             </section>
           </div>
         </section>
@@ -107,6 +120,7 @@
           <label class="admin-search admin-search-sheet" for="cloudinary-folder-search-sheet">
             <input id="cloudinary-folder-search-sheet" type="search" placeholder="Search folders">
           </label>
+          <button class="admin-root-link" type="button" data-folder="darshan-magic/gallery">All folders</button>
           <div class="upload-folder-list admin-folder-sheet-list" id="cloudinary-folder-sheet-list">
             <article class="upload-result-empty">Loading folders...</article>
           </div>

@@ -139,6 +139,7 @@ const cloudinaryOpenFolderSheetButtons = [
   document.getElementById("cloudinary-toggle-folder-sheet-desktop")
 ].filter(Boolean);
 const cloudinaryCloseFolderSheetButton = document.getElementById("cloudinary-close-folder-sheet");
+const cloudinaryRootFolderLinks = Array.from(document.querySelectorAll(".admin-root-link"));
 const CLOUDINARY_FOLDER_STORAGE_KEY = "darshans-magic-active-folder";
 let availableCloudinaryFolders = [];
 let activeCloudinaryFolder = "darshan-magic/gallery";
@@ -439,8 +440,21 @@ function updatePhotoSelectionDom() {
   updateDeleteSelectedButton();
 }
 
+function syncRootFolderLinks() {
+  cloudinaryRootFolderLinks.forEach((button) => {
+    const folder = String(button.getAttribute("data-folder") || "").trim();
+    button.classList.toggle("is-active", folder === activeCloudinaryFolder);
+    button.classList.toggle("is-selected", folder === selectedCloudinaryFolder);
+  });
+}
+
 function setSelectedCloudinaryFolder(folderName = "") {
   selectedCloudinaryFolder = folderName || activeCloudinaryFolder || "darshan-magic/gallery";
+  syncRootLinksAndLists();
+}
+
+function syncRootLinksAndLists() {
+  syncRootFolderLinks();
   renderCloudinaryFolderList(availableCloudinaryFolders);
 }
 
@@ -453,6 +467,7 @@ function setActiveCloudinaryFolder(folderName = "") {
   }
 
   syncCloudinaryFolderInputs(activeCloudinaryFolder);
+  syncRootLinksAndLists();
 }
 
 function saveActiveCloudinaryFolder(folderName = "") {
@@ -557,7 +572,7 @@ function ensureCloudinaryFolderAvailable(folderName = "") {
     cloudinaryExistingFolder.innerHTML += `<option value="${escapeHtml(normalizedFolder)}">${escapeHtml(normalizedFolder)}</option>`;
   }
 
-  renderCloudinaryFolderList(availableCloudinaryFolders);
+  syncRootLinksAndLists();
   return normalizedFolder;
 }
 
@@ -569,7 +584,7 @@ function setFolderSearchValue(value = "") {
   if (cloudinaryFolderSearchSheetInput && cloudinaryFolderSearchSheetInput.value !== cloudinaryFolderFilter) {
     cloudinaryFolderSearchSheetInput.value = cloudinaryFolderFilter;
   }
-  renderCloudinaryFolderList(availableCloudinaryFolders);
+  syncRootLinksAndLists();
 }
 
 async function getCloudinaryConfig() {
@@ -619,7 +634,7 @@ async function loadCloudinaryFolders() {
 
     if (!response.ok || !Array.isArray(payload.folders) || !payload.folders.length) {
       availableCloudinaryFolders = Array.from(cloudinaryExistingFolder.options).map((option) => option.value).filter(Boolean);
-      renderCloudinaryFolderList(availableCloudinaryFolders);
+      syncRootLinksAndLists();
       return;
     }
 
@@ -627,11 +642,11 @@ async function loadCloudinaryFolders() {
     cloudinaryExistingFolder.innerHTML = payload.folders
       .map((folder) => `<option value="${escapeHtml(folder)}">${escapeHtml(folder)}</option>`)
       .join("");
-    renderCloudinaryFolderList(availableCloudinaryFolders);
+    syncRootLinksAndLists();
   } catch {
     // Keep fallback folder option if listing fails.
     availableCloudinaryFolders = Array.from(cloudinaryExistingFolder.options).map((option) => option.value);
-    renderCloudinaryFolderList(availableCloudinaryFolders);
+    syncRootLinksAndLists();
   }
 }
 
@@ -642,7 +657,6 @@ async function loadCloudinaryFolderImages(folderName) {
   setActiveCloudinaryFolder(normalizedFolder);
   saveActiveCloudinaryFolder(normalizedFolder);
   setCloudinaryFolderMeta("Loading folder contents...");
-  renderCloudinaryFolderList(availableCloudinaryFolders);
   cloudinaryUploadResults.innerHTML = '<article class="upload-result-empty">Loading folder photos...</article>';
 
   try {
@@ -1294,6 +1308,28 @@ if (cloudinaryFolderSearchSheetInput) {
     setFolderSearchValue(event.target.value || "");
   });
 }
+
+cloudinaryRootFolderLinks.forEach((button) => {
+  button.addEventListener("click", () => {
+    const folder = String(button.getAttribute("data-folder") || "").trim();
+    if (!folder) return;
+
+    if (usesSingleTapFolderOpen()) {
+      loadCloudinaryFolderImages(folder);
+      closeCloudinaryFolderSheet();
+      return;
+    }
+
+    setSelectedCloudinaryFolder(folder);
+  });
+
+  button.addEventListener("dblclick", () => {
+    const folder = String(button.getAttribute("data-folder") || "").trim();
+    if (!folder) return;
+    loadCloudinaryFolderImages(folder);
+    closeCloudinaryFolderSheet();
+  });
+});
 
 if (cloudinaryDropzone && cloudinaryExplorerUploadInput) {
   cloudinaryDropzone.addEventListener("click", () => {
