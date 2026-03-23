@@ -936,6 +936,10 @@ body.menu-open .menu-toggle span:nth-child(3) {
   color: rgba(245, 237, 231, 0.92);
 }
 
+.upload-form select {
+  width: 100%;
+}
+
 .upload-form input[type="file"] {
   padding: 0.85rem 1rem;
 }

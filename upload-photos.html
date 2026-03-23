@@ -49,8 +49,15 @@
               <form class="booking-form upload-form" id="cloudinary-upload-form">
                 <div class="booking-grid">
                   <label class="field field-full">
-                    <span>Cloudinary folder</span>
-                    <input type="text" name="folderName" placeholder="darshan-magic/events/birthday-party" value="darshan-magic/gallery" required>
+                    <span>Choose existing folder</span>
+                    <select name="existingFolder" id="cloudinary-existing-folder">
+                      <option value="darshan-magic/gallery">darshan-magic/gallery</option>
+                    </select>
+                  </label>
+
+                  <label class="field field-full">
+                    <span>Or create new folder</span>
+                    <input type="text" name="newFolderName" placeholder="darshan-magic/events/birthday-party">
                   </label>
 
                   <label class="field field-full">

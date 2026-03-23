@@ -95,6 +95,7 @@ const testimonialStatus = document.getElementById("testimonial-status");
 const cloudinaryUploadForm = document.getElementById("cloudinary-upload-form");
 const cloudinaryUploadStatus = document.getElementById("cloudinary-upload-status");
 const cloudinaryUploadResults = document.getElementById("cloudinary-upload-results");
+const cloudinaryExistingFolder = document.getElementById("cloudinary-existing-folder");
 
 function setupTestimonialLoop() {
   if (!testimonialTrack) return;
@@ -226,6 +227,29 @@ async function getCloudinaryConfig() {
   }
 
   return payload;
+}
+
+async function loadCloudinaryFolders() {
+  if (!cloudinaryExistingFolder) return;
+
+  try {
+    const response = await fetch("/api/cloudinary-folders", {
+      headers: {
+        Accept: "application/json"
+      }
+    });
+    const payload = await response.json().catch(() => ({}));
+
+    if (!response.ok || !Array.isArray(payload.folders) || !payload.folders.length) {
+      return;
+    }
+
+    cloudinaryExistingFolder.innerHTML = payload.folders
+      .map((folder) => `<option value="${escapeHtml(folder)}">${escapeHtml(folder)}</option>`)
+      .join("");
+  } catch {
+    // Keep fallback folder option if listing fails.
+  }
 }
 
 async function uploadSinglePhoto(file, config, folderName) {
@@ -522,9 +546,9 @@ if (cloudinaryUploadForm) {
     const submitButton = cloudinaryUploadForm.querySelector('button[type="submit"]');
     const originalButtonLabel = submitButton ? submitButton.textContent : "";
     const fileInput = cloudinaryUploadForm.querySelector('input[type="file"]');
-    const folderNameInput = cloudinaryUploadForm.querySelector('input[name="folderName"]');
+    const newFolderNameInput = cloudinaryUploadForm.querySelector('input[name="newFolderName"]');
     const files = Array.from(fileInput?.files || []);
-    const folderName = String(folderNameInput?.value || "").trim();
+    const folderName = String(newFolderNameInput?.value || "").trim() || String(cloudinaryExistingFolder?.value || "").trim();
 
     if (!files.length) {
       if (cloudinaryUploadStatus) {
@@ -536,7 +560,7 @@ if (cloudinaryUploadForm) {
 
     if (!folderName) {
       if (cloudinaryUploadStatus) {
-        cloudinaryUploadStatus.textContent = "Please enter a Cloudinary folder.";
+        cloudinaryUploadStatus.textContent = "Please choose or create a Cloudinary folder.";
         cloudinaryUploadStatus.dataset.state = "error";
       }
       return;
@@ -563,8 +587,11 @@ if (cloudinaryUploadForm) {
 
       renderUploadResults(uploaded);
       cloudinaryUploadForm.reset();
-      if (folderNameInput) {
-        folderNameInput.value = "darshan-magic/gallery";
+      if (cloudinaryExistingFolder) {
+        cloudinaryExistingFolder.value = folderName;
+      }
+      if (newFolderNameInput) {
+        newFolderNameInput.value = "";
       }
 
       if (cloudinaryUploadStatus) {
@@ -585,6 +612,7 @@ if (cloudinaryUploadForm) {
   });
 }
 
+loadCloudinaryFolders();
 loadGalleryImages().then(() => {
   if (galleryStack) {
     const resizeEvent = new Event("resize");
