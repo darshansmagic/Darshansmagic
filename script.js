@@ -86,6 +86,7 @@ if ("IntersectionObserver" in window && countElements.length) {
 
 const testimonialTrack = document.getElementById("testimonial-track");
 const testimonialGridList = document.getElementById("testimonial-grid-list");
+const galleryGrid = document.getElementById("gallery-grid");
 const galleryStack = document.getElementById("gallery-stack");
 const bookingForm = document.getElementById("booking-form");
 const bookingStatus = document.getElementById("booking-status");
@@ -158,6 +159,31 @@ function createEmptyTestimonialCard(message) {
     event_type: "",
     rating: null
   });
+}
+
+function createGalleryCard(url, alt, isLarge) {
+  const figure = document.createElement("figure");
+  figure.className = `gallery-card${isLarge ? " gallery-card-large" : ""}`;
+  figure.setAttribute("data-reveal", "");
+
+  const image = document.createElement("img");
+  image.src = url;
+  image.alt = alt;
+  figure.appendChild(image);
+
+  return figure;
+}
+
+function createGalleryStackCard(url, alt) {
+  const article = document.createElement("article");
+  article.className = "gallery-stack-card";
+
+  const image = document.createElement("img");
+  image.src = url;
+  image.alt = alt;
+  article.appendChild(image);
+
+  return article;
 }
 
 function escapeHtml(value = "") {
@@ -277,6 +303,44 @@ async function loadTestimonials() {
   }
 }
 
+async function loadGalleryImages() {
+  if (!galleryGrid && !galleryStack) return;
+
+  try {
+    const response = await fetch("/api/gallery-images", {
+      headers: {
+        Accept: "application/json"
+      }
+    });
+    const payload = await response.json().catch(() => ({}));
+
+    if (!response.ok || !Array.isArray(payload.images) || !payload.images.length) {
+      return;
+    }
+
+    const items = payload.images.slice(0, 5).map((item, index) => ({
+      url: item.secure_url,
+      alt: `Darshan's Magic performance photo ${index + 1}`
+    }));
+
+    if (galleryGrid) {
+      galleryGrid.innerHTML = "";
+      items.forEach((item, index) => {
+        galleryGrid.appendChild(createGalleryCard(item.url, item.alt, index === 0));
+      });
+    }
+
+    if (galleryStack) {
+      galleryStack.innerHTML = "";
+      items.forEach((item) => {
+        galleryStack.appendChild(createGalleryStackCard(item.url, item.alt));
+      });
+    }
+  } catch {
+    // Keep the gallery empty if Cloudinary images cannot be loaded.
+  }
+}
+
 if (galleryStack) {
   let stackCards = Array.from(galleryStack.children);
   let autoCycle;
@@ -289,6 +353,7 @@ if (galleryStack) {
   }
 
   function renderGalleryStack() {
+    stackCards = Array.from(galleryStack.children);
     stackCards.forEach((card, index) => {
       const depth = Math.min(index, 3);
       const rotation = randomRotation(index);
@@ -313,7 +378,7 @@ if (galleryStack) {
   function startGalleryAutoplay() {
     clearInterval(autoCycle);
     autoCycle = setInterval(() => {
-      if (window.innerWidth <= 640) {
+      if (window.innerWidth <= 640 && stackCards.length > 1) {
         cycleGalleryStack();
       }
     }, 3200);
@@ -499,7 +564,7 @@ if (cloudinaryUploadForm) {
       renderUploadResults(uploaded);
       cloudinaryUploadForm.reset();
       if (folderNameInput) {
-        folderNameInput.value = "darshan-magic";
+        folderNameInput.value = "darshan-magic/gallery";
       }
 
       if (cloudinaryUploadStatus) {
@@ -519,5 +584,12 @@ if (cloudinaryUploadForm) {
     }
   });
 }
+
+loadGalleryImages().then(() => {
+  if (galleryStack) {
+    const resizeEvent = new Event("resize");
+    window.dispatchEvent(resizeEvent);
+  }
+});
 
 loadTestimonials();
