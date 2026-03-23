@@ -714,7 +714,7 @@ body.menu-open .menu-toggle span:nth-child(3) {
 
 .testimonial-actions {
   display: flex;
-  justify-content: center;
+  justify-content: flex-start;
   gap: 0.85rem;
   flex-wrap: wrap;
   margin-top: 0.6rem;

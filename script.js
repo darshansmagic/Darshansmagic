@@ -98,6 +98,8 @@ function setupTestimonialLoop() {
   Array.from(testimonialTrack.querySelectorAll('[aria-hidden="true"]')).forEach((clone) => clone.remove());
 
   const originals = Array.from(testimonialTrack.children);
+  if (!originals.length) return;
+
   originals.forEach((card) => {
     const clone = card.cloneNode(true);
     clone.setAttribute("aria-hidden", "true");
@@ -146,6 +148,15 @@ function createTestimonialCard({ customer_name: customerName, testimonial, event
   return article;
 }
 
+function createEmptyTestimonialCard(message) {
+  return createTestimonialCard({
+    customer_name: "Darshan's Magic",
+    testimonial: message,
+    event_type: "",
+    rating: null
+  });
+}
+
 async function loadTestimonials() {
   if (!testimonialTrack && !testimonialGridList) return;
 
@@ -160,7 +171,12 @@ async function loadTestimonials() {
 
     if (!response.ok || !Array.isArray(payload.testimonials) || !payload.testimonials.length) {
       if (testimonialTrack) {
-        setupTestimonialLoop();
+        testimonialTrack.innerHTML = "";
+        testimonialTrack.appendChild(createEmptyTestimonialCard("Approved customer reviews will appear here soon."));
+      }
+      if (testimonialGridList) {
+        testimonialGridList.innerHTML = "";
+        testimonialGridList.appendChild(createEmptyTestimonialCard("Approved customer reviews will appear here soon."));
       }
       return;
     }
@@ -181,7 +197,12 @@ async function loadTestimonials() {
     }
   } catch {
     if (testimonialTrack) {
-      setupTestimonialLoop();
+      testimonialTrack.innerHTML = "";
+      testimonialTrack.appendChild(createEmptyTestimonialCard("We could not load testimonials right now. Please check back shortly."));
+    }
+    if (testimonialGridList) {
+      testimonialGridList.innerHTML = "";
+      testimonialGridList.appendChild(createEmptyTestimonialCard("We could not load testimonials right now. Please check back shortly."));
     }
   }
 }
