@@ -209,11 +209,7 @@ if (bookingForm) {
       }
 
       bookingForm.reset();
-
-      if (bookingStatus) {
-        bookingStatus.textContent = "Thanks. Your enquiry has been sent and we will get back to you soon.";
-        bookingStatus.dataset.state = "success";
-      }
+      window.location.href = "thank-you.html";
     } catch (error) {
       if (bookingStatus) {
         bookingStatus.textContent = error.message || "We could not send your enquiry right now. Please try again.";

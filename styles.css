@@ -860,6 +860,35 @@ body.menu-open .menu-toggle span:nth-child(3) {
   color: #f0b8b8;
 }
 
+.thank-you-panel {
+  max-width: 760px;
+  margin: 0 auto;
+  text-align: center;
+}
+
+.thank-you-section {
+  padding-top: calc(var(--header-height) + 2.5rem);
+}
+
+.thank-you-intro {
+  max-width: 760px;
+  margin: 0 auto 1.5rem;
+}
+
+.thank-you-copy {
+  max-width: 620px;
+  margin: 0 auto;
+}
+
+.thank-you-copy p + p {
+  margin-top: 1rem;
+}
+
+.thank-you-actions {
+  justify-content: center;
+  margin-top: 2rem;
+}
+
 .site-footer {
   margin-top: 1rem;
   padding: 2.75rem 0 1.4rem;
