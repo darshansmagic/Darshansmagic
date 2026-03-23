@@ -181,9 +181,7 @@ function renderUploadResults(items) {
     <article class="upload-result-card">
       <img class="upload-result-image" src="${escapeHtml(item.secure_url)}" alt="${escapeHtml(item.original_filename || "Uploaded photo")}">
       <div class="upload-result-copy">
-        <strong>${escapeHtml(item.original_filename || "Uploaded photo")}</strong>
-        <a href="${escapeHtml(item.secure_url)}" target="_blank" rel="noreferrer">Open image</a>
-        <input class="upload-result-url" type="text" value="${escapeHtml(item.secure_url)}" readonly>
+        <span>Uploaded successfully</span>
       </div>
     </article>
   `).join("");
@@ -204,16 +202,15 @@ async function getCloudinaryConfig() {
   return payload;
 }
 
-async function uploadSinglePhoto(file, config, eventName) {
+async function uploadSinglePhoto(file, config, folderName) {
   const formData = new FormData();
   formData.append("file", file);
   formData.append("upload_preset", config.uploadPreset);
-  formData.append("folder", "darshan-magic");
+  formData.append("folder", folderName || "darshan-magic");
 
-  const trimmedEvent = String(eventName || "").trim();
-  if (trimmedEvent) {
-    formData.append("tags", trimmedEvent.toLowerCase().replace(/\s+/g, "-"));
-    formData.append("context", `alt=${trimmedEvent}`);
+  const trimmedFolder = String(folderName || "").trim();
+  if (trimmedFolder) {
+    formData.append("tags", trimmedFolder.toLowerCase().replace(/[^\w/-]+/g, "-"));
   }
 
   const response = await fetch(`https://api.cloudinary.com/v1_1/${config.cloudName}/image/upload`, {
@@ -460,12 +457,21 @@ if (cloudinaryUploadForm) {
     const submitButton = cloudinaryUploadForm.querySelector('button[type="submit"]');
     const originalButtonLabel = submitButton ? submitButton.textContent : "";
     const fileInput = cloudinaryUploadForm.querySelector('input[type="file"]');
-    const eventNameInput = cloudinaryUploadForm.querySelector('input[name="eventName"]');
+    const folderNameInput = cloudinaryUploadForm.querySelector('input[name="folderName"]');
     const files = Array.from(fileInput?.files || []);
+    const folderName = String(folderNameInput?.value || "").trim();
 
     if (!files.length) {
       if (cloudinaryUploadStatus) {
         cloudinaryUploadStatus.textContent = "Please select at least one photo.";
+        cloudinaryUploadStatus.dataset.state = "error";
+      }
+      return;
+    }
+
+    if (!folderName) {
+      if (cloudinaryUploadStatus) {
+        cloudinaryUploadStatus.textContent = "Please enter a Cloudinary folder.";
         cloudinaryUploadStatus.dataset.state = "error";
       }
       return;
@@ -486,15 +492,18 @@ if (cloudinaryUploadForm) {
       const uploaded = [];
 
       for (const file of files) {
-        const result = await uploadSinglePhoto(file, config, eventNameInput?.value || "");
+        const result = await uploadSinglePhoto(file, config, folderName);
         uploaded.push(result);
       }
 
       renderUploadResults(uploaded);
       cloudinaryUploadForm.reset();
+      if (folderNameInput) {
+        folderNameInput.value = "darshan-magic";
+      }
 
       if (cloudinaryUploadStatus) {
-        cloudinaryUploadStatus.textContent = `${uploaded.length} photo${uploaded.length === 1 ? "" : "s"} uploaded successfully.`;
+        cloudinaryUploadStatus.textContent = `${uploaded.length} photo${uploaded.length === 1 ? "" : "s"} uploaded successfully to ${folderName}.`;
         cloudinaryUploadStatus.dataset.state = "success";
       }
     } catch (error) {
