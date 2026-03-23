@@ -3,8 +3,8 @@
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>Thank You | Darshan's Magic Testimonials</title>
-  <meta name="description" content="Thank you for sharing your testimonial with Darshan's Magic.">
+  <title>Testimonials | Darshan's Magic</title>
+  <meta name="description" content="Read approved customer testimonials for Darshan's Magic.">
   <link rel="preconnect" href="https://fonts.googleapis.com">
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
   <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&family=Playfair+Display:wght@600;700;800&display=swap" rel="stylesheet">
@@ -12,7 +12,7 @@
 </head>
 <body>
   <div class="site-shell">
-    <header class="site-header is-scrolled">
+    <header class="site-header is-scrolled" id="site-header">
       <div class="container header-bar">
         <a class="brand" href="index.html" aria-label="Darshan's Magic home">
           <img class="brand-logo" src="assets/logo.png" alt="Darshan's Magic logo">
@@ -31,22 +31,28 @@
     </header>
 
     <main>
-      <section class="section testimonials-section thank-you-section">
+      <section class="section testimonials-section testimonials-page-section">
         <div class="container">
-          <div class="section-intro testimonial-intro thank-you-intro" data-reveal>
-            <p class="eyebrow">Testimonial Received</p>
-            <h1>Thanks for your kind words.</h1>
-            <p>Your testimonial has been received and will appear on the website once it has been reviewed.</p>
+          <div class="section-intro testimonial-intro testimonials-page-intro" data-reveal>
+            <p class="eyebrow">Testimonials</p>
+            <h1>Reviews from customers who have seen Darshan's Magic live.</h1>
+            <p>Read approved testimonials from hosts, families, and organisers after weddings, private events, parties, cocktail receptions, and corporate functions.</p>
           </div>
 
-          <div class="cta-panel thank-you-panel" data-reveal>
-            <div class="thank-you-copy">
-              <p class="thank-you-contact-copy">We really appreciate you taking the time to share your experience. Your feedback helps future hosts feel confident about booking Darshan's Magic.</p>
-              <div class="hero-actions thank-you-actions">
-                <a class="button button-primary" href="index.html">Back to Home</a>
-                <a class="button button-secondary" href="leave-a-testimonial.html">Send Another Testimonial</a>
+          <div class="testimonials-page-actions" data-reveal>
+            <a class="button button-ghost" href="index.html#testimonials">Back to Highlights</a>
+            <a class="button button-secondary" href="leave-a-testimonial.html">Leave a Review</a>
+          </div>
+
+          <div class="testimonial-grid-list" id="testimonial-grid-list" data-reveal>
+            <article class="testimonial-card">
+              <div class="testimonial-card-content">
+                <p class="testimonial-copy">Loading testimonials...</p>
+                <div class="testimonial-meta">
+                  <strong>Darshan's Magic</strong>
+                </div>
               </div>
-            </div>
+            </article>
           </div>
         </div>
       </section>

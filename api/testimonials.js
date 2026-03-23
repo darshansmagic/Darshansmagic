@@ -14,9 +14,10 @@ function readJsonBody(req) {
   return req.body || {};
 }
 
-async function fetchApprovedTestimonials() {
+async function fetchApprovedTestimonials(limit = 12) {
+  const safeLimit = Number.isInteger(limit) && limit > 0 ? limit : 12;
   const response = await fetch(
-    `${SUPABASE_URL}/rest/v1/testimonials?select=customer_name,event_type,testimonial,rating,featured,approved_at,submitted_at&status=eq.approved&order=featured.desc.nullslast,approved_at.desc.nullslast,submitted_at.desc&limit=12`,
+    `${SUPABASE_URL}/rest/v1/testimonials?select=customer_name,event_type,testimonial,rating,featured,approved_at,submitted_at&status=eq.approved&order=featured.desc.nullslast,approved_at.desc.nullslast,submitted_at.desc&limit=${safeLimit}`,
     {
       headers: {
         apikey: SUPABASE_ANON_KEY,
@@ -80,7 +81,10 @@ module.exports = async function handler(req, res) {
 
   if (req.method === "GET") {
     try {
-      const testimonials = await fetchApprovedTestimonials();
+      const requestUrl = new URL(req.url, "http://localhost");
+      const all = requestUrl.searchParams.get("all") === "true";
+      const limit = all ? 100 : Number(requestUrl.searchParams.get("limit")) || 12;
+      const testimonials = await fetchApprovedTestimonials(limit);
       return res.status(200).json({ testimonials });
     } catch (error) {
       return res.status(502).json({ error: `Supabase error: ${error.message}` });

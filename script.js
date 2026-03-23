@@ -85,7 +85,7 @@ if ("IntersectionObserver" in window && countElements.length) {
 }
 
 const testimonialTrack = document.getElementById("testimonial-track");
-
+const testimonialGridList = document.getElementById("testimonial-grid-list");
 const galleryStack = document.getElementById("gallery-stack");
 const bookingForm = document.getElementById("booking-form");
 const bookingStatus = document.getElementById("booking-status");
@@ -117,7 +117,7 @@ function createTestimonialCard({ customer_name: customerName, testimonial, event
   if (rating) {
     const stars = document.createElement("p");
     stars.className = "testimonial-rating";
-    stars.textContent = "★".repeat(rating);
+    stars.textContent = "\u2605".repeat(rating);
     content.appendChild(stars);
   }
 
@@ -147,10 +147,11 @@ function createTestimonialCard({ customer_name: customerName, testimonial, event
 }
 
 async function loadTestimonials() {
-  if (!testimonialTrack) return;
+  if (!testimonialTrack && !testimonialGridList) return;
 
   try {
-    const response = await fetch("/api/testimonials", {
+    const endpoint = testimonialGridList ? "/api/testimonials?all=true" : "/api/testimonials?limit=12";
+    const response = await fetch(endpoint, {
       headers: {
         Accept: "application/json"
       }
@@ -158,17 +159,30 @@ async function loadTestimonials() {
     const payload = await response.json().catch(() => ({}));
 
     if (!response.ok || !Array.isArray(payload.testimonials) || !payload.testimonials.length) {
-      setupTestimonialLoop();
+      if (testimonialTrack) {
+        setupTestimonialLoop();
+      }
       return;
     }
 
-    testimonialTrack.innerHTML = "";
-    payload.testimonials.forEach((item) => {
-      testimonialTrack.appendChild(createTestimonialCard(item));
-    });
-    setupTestimonialLoop();
+    if (testimonialTrack) {
+      testimonialTrack.innerHTML = "";
+      payload.testimonials.forEach((item) => {
+        testimonialTrack.appendChild(createTestimonialCard(item));
+      });
+      setupTestimonialLoop();
+    }
+
+    if (testimonialGridList) {
+      testimonialGridList.innerHTML = "";
+      payload.testimonials.forEach((item) => {
+        testimonialGridList.appendChild(createTestimonialCard(item));
+      });
+    }
   } catch {
-    setupTestimonialLoop();
+    if (testimonialTrack) {
+      setupTestimonialLoop();
+    }
   }
 }
 

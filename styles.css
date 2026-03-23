@@ -655,7 +655,7 @@ body.menu-open .menu-toggle span:nth-child(3) {
   will-change: transform;
   align-items: stretch;
   width: max-content;
-  animation: testimonial-marquee 42s linear infinite;
+  animation: testimonial-marquee 72s linear infinite;
 }
 
 .testimonial-carousel:hover .testimonial-track {
@@ -715,7 +715,30 @@ body.menu-open .menu-toggle span:nth-child(3) {
 .testimonial-actions {
   display: flex;
   justify-content: center;
+  gap: 0.85rem;
+  flex-wrap: wrap;
   margin-top: 0.6rem;
+}
+
+.testimonials-page-section {
+  padding-top: calc(var(--header-height) + 2.5rem);
+}
+
+.testimonials-page-intro {
+  max-width: 900px;
+}
+
+.testimonials-page-actions {
+  display: flex;
+  gap: 0.85rem;
+  flex-wrap: wrap;
+  margin: 0 0 1.5rem;
+}
+
+.testimonial-grid-list {
+  display: grid;
+  grid-template-columns: repeat(3, minmax(0, 1fr));
+  gap: 1rem;
 }
 
 @keyframes testimonial-marquee {
@@ -964,9 +987,42 @@ body.menu-open .menu-toggle span:nth-child(3) {
   color: rgba(245, 237, 231, 0.74);
 }
 
+.footer-column p {
+  margin: 0;
+  color: rgba(245, 237, 231, 0.62);
+  line-height: 1.7;
+}
+
 .footer-column a:hover,
 .footer-column a:focus-visible {
   color: var(--text-on-dark);
+}
+
+.footer-review-column {
+  max-width: 270px;
+}
+
+.footer-review-link {
+  display: inline-flex;
+  align-items: center;
+  width: fit-content;
+  margin-top: 0.15rem;
+  padding: 0.75rem 1rem;
+  border: 1px solid rgba(201, 166, 107, 0.26);
+  border-radius: 999px;
+  background: linear-gradient(135deg, rgba(201, 166, 107, 0.12), rgba(255, 255, 255, 0.04));
+  color: #f5ede7;
+  font-size: 0.88rem;
+  font-weight: 600;
+  letter-spacing: 0.05em;
+  text-transform: uppercase;
+}
+
+.footer-review-link:hover,
+.footer-review-link:focus-visible {
+  border-color: rgba(201, 166, 107, 0.44);
+  background: linear-gradient(135deg, rgba(201, 166, 107, 0.2), rgba(255, 255, 255, 0.07));
+  color: #fdf8f2;
 }
 
 .footer-bottom {
@@ -1173,6 +1229,10 @@ body.menu-open .menu-toggle span:nth-child(3) {
   .testimonial-card {
     flex-basis: 240px;
     min-width: 240px;
+  }
+
+  .testimonial-grid-list {
+    grid-template-columns: 1fr;
   }
 
   .testimonial-copy {
