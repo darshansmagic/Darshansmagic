@@ -1,6 +1,7 @@
 const CLOUDINARY_CLOUD_NAME = process.env.CLOUDINARY_CLOUD_NAME;
 const CLOUDINARY_API_KEY = process.env.CLOUDINARY_API_KEY;
 const CLOUDINARY_API_SECRET = process.env.CLOUDINARY_API_SECRET;
+const GALLERY_PREFIX = process.env.CLOUDINARY_GALLERY_PREFIX || "darshan-magic/";
 module.exports = async function handler(req, res) {
   if (req.method !== "GET") {
     res.setHeader("Allow", "GET");
@@ -12,7 +13,12 @@ module.exports = async function handler(req, res) {
   }
 
   const auth = Buffer.from(`${CLOUDINARY_API_KEY}:${CLOUDINARY_API_SECRET}`).toString("base64");
-  const endpoint = `https://api.cloudinary.com/v1_1/${CLOUDINARY_CLOUD_NAME}/resources/image/upload?max_results=30`;
+  const query = new URLSearchParams({
+    type: "upload",
+    prefix: GALLERY_PREFIX,
+    max_results: "30"
+  });
+  const endpoint = `https://api.cloudinary.com/v1_1/${CLOUDINARY_CLOUD_NAME}/resources/image/upload?${query.toString()}`;
 
   try {
     const response = await fetch(endpoint, {
@@ -29,6 +35,7 @@ module.exports = async function handler(req, res) {
 
     const images = Array.isArray(payload.resources)
       ? payload.resources
+          .filter((item) => item?.secure_url && String(item.public_id || "").startsWith(GALLERY_PREFIX))
           .sort((a, b) => new Date(b.created_at) - new Date(a.created_at))
           .map((item) => ({
             secure_url: item.secure_url,
