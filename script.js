@@ -741,7 +741,6 @@ if (cloudinaryExistingFolder) {
     }
   });
 }
-}
 
 loadCloudinaryFolders().then(() => {
   if (cloudinaryUploadResults) {
