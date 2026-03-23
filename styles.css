@@ -2236,18 +2236,26 @@ body.admin-upload-page {
 
 .admin-upload-page .upload-modal {
   padding: 0.65rem;
-  align-items: end;
+  align-items: center;
+  justify-content: center;
 }
 
 .admin-upload-page .upload-modal-dialog {
   width: 100%;
   max-width: 560px;
-  border-radius: 22px 22px 0 0;
+  border-radius: 18px;
   padding: 1rem;
 }
 
 .admin-upload-page .upload-modal-header {
   margin-bottom: 0.75rem;
+}
+
+.admin-upload-page .admin-upload-modal-hint {
+  margin: 0 0 0.8rem;
+  font-size: 0.82rem;
+  line-height: 1.45;
+  color: #7a656a;
 }
 
 .admin-upload-page .booking-form {
@@ -2335,7 +2343,7 @@ body.upload-modal-open {
   }
 
   .admin-upload-page .upload-modal-dialog {
-    border-radius: 22px;
+    border-radius: 18px;
   }
 }
 
@@ -2879,5 +2887,29 @@ body.upload-modal-open {
 
   .admin-upload-page .admin-selection-actions {
     gap: 0.3rem;
+  }
+
+  .admin-upload-page .upload-modal {
+    padding: 0.7rem;
+    align-items: center;
+  }
+
+  .admin-upload-page .upload-modal-dialog {
+    max-width: 100%;
+    border-radius: 16px;
+    padding: 0.9rem;
+  }
+
+  .admin-upload-page .upload-modal-header {
+    margin-bottom: 0.6rem;
+  }
+
+  .admin-upload-page .upload-modal-header h3 {
+    font-size: 1rem;
+  }
+
+  .admin-upload-page .admin-upload-modal-hint {
+    margin-bottom: 0.7rem;
+    font-size: 0.78rem;
   }
 }
