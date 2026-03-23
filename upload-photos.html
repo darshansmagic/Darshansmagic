@@ -27,7 +27,7 @@
           <a href="tel:+61420786767">Contact</a>
         </nav>
 
-        <a class="button button-primary header-cta" href="#upload-form">Upload Photos</a>
+        <button class="button button-primary header-cta" id="cloudinary-open-upload-modal" type="button">Upload Photos</button>
       </div>
     </header>
 
@@ -39,37 +39,14 @@
               <div class="cta-copy upload-copy">
                 <p class="eyebrow">Admin Uploads</p>
                 <h2>Upload performance photos from any device.</h2>
-                <p>Choose one or more photos, pick an existing folder or type a new event name, and upload them directly. This page is intended for admin use only.</p>
+                <p>Mobile-first admin uploader for Cloudinary folders.</p>
                 <div class="upload-note-list">
-                  <p>Supported flow: signed admin uploads through Cloudinary.</p>
-                  <p>If you type a plain event name like <strong>Birthday Party</strong>, it will upload to <strong>darshan-magic/events/birthday-party</strong>.</p>
-                  <p>Leave the new-folder field empty if you want to use the selected folder from the explorer and dropdown as-is.</p>
+                  <p>Pick a folder below, then upload from the popup.</p>
+                </div>
+                <div class="upload-hero-actions">
+                  <button class="button button-primary" id="cloudinary-open-upload-panel" type="button">Open Upload</button>
                 </div>
               </div>
-
-              <form class="booking-form upload-form" id="cloudinary-upload-form">
-                <div class="booking-grid">
-                  <label class="field field-full">
-                    <span>Choose existing folder</span>
-                    <select name="existingFolder" id="cloudinary-existing-folder">
-                      <option value="darshan-magic/gallery">darshan-magic/gallery</option>
-                    </select>
-                  </label>
-
-                  <label class="field field-full">
-                    <span>Or create new folder</span>
-                    <input type="text" name="newFolderName" placeholder="Birthday Party or darshan-magic/events/birthday-party">
-                  </label>
-
-                  <label class="field field-full">
-                    <span>Select photos</span>
-                    <input type="file" name="photos" id="cloudinary-photos" accept="image/*" multiple required>
-                  </label>
-                </div>
-
-                <button class="button button-primary booking-submit" id="upload-form" type="submit">Upload Photos</button>
-                <p class="booking-status" id="cloudinary-upload-status" role="status" aria-live="polite"></p>
-              </form>
             </div>
           </div>
 
@@ -119,6 +96,43 @@
         </div>
       </section>
     </main>
+
+    <div class="upload-modal" id="cloudinary-upload-modal" hidden>
+      <div class="upload-modal-backdrop" data-close-upload-modal></div>
+      <div class="upload-modal-dialog" role="dialog" aria-modal="true" aria-labelledby="cloudinary-upload-modal-title">
+        <div class="upload-modal-header">
+          <div>
+            <p class="upload-pane-label">Quick Upload</p>
+            <h3 id="cloudinary-upload-modal-title">Upload to a folder</h3>
+          </div>
+          <button class="upload-modal-close" id="cloudinary-close-upload-modal" type="button" aria-label="Close upload modal">Close</button>
+        </div>
+
+        <form class="booking-form upload-form" id="cloudinary-upload-form">
+          <div class="booking-grid">
+            <label class="field field-full">
+              <span>Choose existing folder</span>
+              <select name="existingFolder" id="cloudinary-existing-folder">
+                <option value="darshan-magic/gallery">darshan-magic/gallery</option>
+              </select>
+            </label>
+
+            <label class="field field-full">
+              <span>Or create new folder</span>
+              <input type="text" name="newFolderName" placeholder="Birthday Party or darshan-magic/events/birthday-party">
+            </label>
+
+            <label class="field field-full">
+              <span>Select photos</span>
+              <input type="file" name="photos" id="cloudinary-photos" accept="image/*" multiple required>
+            </label>
+          </div>
+
+          <button class="button button-primary booking-submit" id="upload-form" type="submit">Upload Photos</button>
+          <p class="booking-status" id="cloudinary-upload-status" role="status" aria-live="polite"></p>
+        </form>
+      </div>
+    </div>
 
     <footer class="site-footer">
       <div class="container footer-grid">

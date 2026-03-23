@@ -945,6 +945,10 @@ body.menu-open .menu-toggle span:nth-child(3) {
   max-width: 560px;
 }
 
+.upload-hero-actions {
+  margin-top: 1.25rem;
+}
+
 .upload-note-list {
   display: grid;
   gap: 0.65rem;
@@ -968,6 +972,67 @@ body.menu-open .menu-toggle span:nth-child(3) {
 
 .upload-results-shell {
   margin-top: 2rem;
+}
+
+.upload-modal {
+  position: fixed;
+  inset: 0;
+  z-index: 220;
+  display: grid;
+  place-items: center;
+  padding: 1rem;
+}
+
+.upload-modal[hidden] {
+  display: none;
+}
+
+.upload-modal-backdrop {
+  position: absolute;
+  inset: 0;
+  background: rgba(18, 10, 16, 0.72);
+  backdrop-filter: blur(8px);
+}
+
+.upload-modal-dialog {
+  position: relative;
+  z-index: 1;
+  width: min(100%, 560px);
+  max-height: min(92vh, 900px);
+  overflow: auto;
+  border-radius: 28px;
+  padding: 1rem;
+  background:
+    radial-gradient(circle at top right, rgba(201, 166, 107, 0.12), transparent 28%),
+    linear-gradient(135deg, var(--dark) 0%, var(--dark-alt) 58%, var(--dark-edge) 100%);
+  box-shadow: var(--shadow-rich);
+}
+
+.upload-modal-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: flex-start;
+  gap: 1rem;
+  margin-bottom: 1rem;
+}
+
+.upload-modal-header h3 {
+  margin: 0.35rem 0 0;
+  color: var(--text-on-dark);
+}
+
+.upload-modal-close {
+  border: 1px solid rgba(245, 237, 231, 0.18);
+  background: rgba(255, 255, 255, 0.06);
+  color: var(--text-on-dark);
+  border-radius: 999px;
+  padding: 0.7rem 1rem;
+  font: inherit;
+  cursor: pointer;
+}
+
+body.upload-modal-open {
+  overflow: hidden;
 }
 
 .upload-results-intro {
@@ -1451,6 +1516,10 @@ body.menu-open .menu-toggle span:nth-child(3) {
     width: 100%;
   }
 
+  .upload-copy h2 {
+    font-size: clamp(3rem, 15vw, 4.5rem);
+  }
+
   .services-grid,
   .gallery-grid {
     grid-template-columns: 1fr;
@@ -1551,6 +1620,26 @@ body.menu-open .menu-toggle span:nth-child(3) {
 
   .cta-panel {
     padding: 3.5rem 1.2rem;
+  }
+
+  .upload-copy p {
+    max-width: 100%;
+  }
+
+  .upload-modal {
+    padding: 0.6rem;
+    align-items: end;
+  }
+
+  .upload-modal-dialog {
+    width: 100%;
+    max-height: 92vh;
+    border-radius: 26px 26px 0 0;
+    padding: 0.9rem;
+  }
+
+  .upload-modal-header {
+    flex-direction: column;
   }
 
   .testimonial-stack-layout {

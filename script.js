@@ -117,6 +117,12 @@ const cloudinaryCreateFolderButton = document.getElementById("cloudinary-create-
 const cloudinaryExplorerUploadInput = document.getElementById("cloudinary-explorer-upload");
 const cloudinaryFolderBreadcrumbs = document.getElementById("cloudinary-folder-breadcrumbs");
 const cloudinaryFolderMeta = document.getElementById("cloudinary-folder-meta");
+const cloudinaryUploadModal = document.getElementById("cloudinary-upload-modal");
+const cloudinaryOpenUploadModalButtons = [
+  document.getElementById("cloudinary-open-upload-modal"),
+  document.getElementById("cloudinary-open-upload-panel")
+].filter(Boolean);
+const cloudinaryCloseUploadModalButton = document.getElementById("cloudinary-close-upload-modal");
 const CLOUDINARY_FOLDER_STORAGE_KEY = "darshans-magic-active-folder";
 let availableCloudinaryFolders = [];
 let activeCloudinaryFolder = "darshan-magic/gallery";
@@ -376,6 +382,21 @@ function saveActiveCloudinaryFolder(folderName = "") {
 function getSavedCloudinaryFolder() {
   if (typeof window === "undefined" || !window.localStorage) return "";
   return String(window.localStorage.getItem(CLOUDINARY_FOLDER_STORAGE_KEY) || "").trim();
+}
+
+function openCloudinaryUploadModal() {
+  if (!cloudinaryUploadModal) return;
+  cloudinaryUploadModal.hidden = false;
+  body.classList.add("upload-modal-open");
+  if (cloudinaryExistingFolder) {
+    cloudinaryExistingFolder.value = activeCloudinaryFolder;
+  }
+}
+
+function closeCloudinaryUploadModal() {
+  if (!cloudinaryUploadModal) return;
+  cloudinaryUploadModal.hidden = true;
+  body.classList.remove("upload-modal-open");
 }
 
 function renderCloudinaryFolderList(folders = []) {
@@ -901,6 +922,7 @@ if (cloudinaryUploadForm) {
         cloudinaryUploadStatus.textContent = `${result.uploaded.length} photo${result.uploaded.length === 1 ? "" : "s"} uploaded successfully to ${result.folderName}.`;
         cloudinaryUploadStatus.dataset.state = "success";
       }
+      closeCloudinaryUploadModal();
     } catch (error) {
       if (cloudinaryUploadStatus) {
         cloudinaryUploadStatus.textContent = error.message || "We could not upload your photos right now.";
@@ -926,7 +948,7 @@ if (cloudinaryExistingFolder) {
 
 if (cloudinaryUploadHereButton && cloudinaryExplorerUploadInput) {
   cloudinaryUploadHereButton.addEventListener("click", () => {
-    cloudinaryExplorerUploadInput.click();
+    openCloudinaryUploadModal();
   });
 }
 
@@ -965,6 +987,32 @@ if (cloudinaryExplorerUploadInput) {
     }
   });
 }
+
+cloudinaryOpenUploadModalButtons.forEach((button) => {
+  button.addEventListener("click", () => {
+    openCloudinaryUploadModal();
+  });
+});
+
+if (cloudinaryCloseUploadModalButton) {
+  cloudinaryCloseUploadModalButton.addEventListener("click", () => {
+    closeCloudinaryUploadModal();
+  });
+}
+
+if (cloudinaryUploadModal) {
+  Array.from(cloudinaryUploadModal.querySelectorAll("[data-close-upload-modal]")).forEach((element) => {
+    element.addEventListener("click", () => {
+      closeCloudinaryUploadModal();
+    });
+  });
+}
+
+window.addEventListener("keydown", (event) => {
+  if (event.key === "Escape" && cloudinaryUploadModal && !cloudinaryUploadModal.hidden) {
+    closeCloudinaryUploadModal();
+  }
+});
 
 if (cloudinaryRefreshFolderButton) {
   cloudinaryRefreshFolderButton.addEventListener("click", async () => {
