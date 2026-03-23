@@ -1248,8 +1248,8 @@ body.menu-open .menu-toggle span:nth-child(3) {
   }
 
   .footer-grid {
-    grid-template-columns: 0.9fr 1.1fr;
-    gap: 0.9rem;
+    grid-template-columns: 1fr;
+    gap: 1.25rem;
   }
 
   .footer-logo {
@@ -1257,16 +1257,30 @@ body.menu-open .menu-toggle span:nth-child(3) {
     margin-bottom: 0.35rem;
   }
 
-  .footer-brand p {
-    display: none;
+  .footer-brand {
+    display: grid;
+    justify-items: start;
   }
 
-  .footer-grid > .footer-column:first-of-type {
-    display: none;
+  .footer-brand p {
+    display: block;
+    max-width: 100%;
+    font-size: 0.92rem;
+    line-height: 1.55;
   }
 
   .footer-column {
     gap: 0.45rem;
+  }
+
+  .footer-review-column {
+    max-width: 100%;
+  }
+
+  .footer-review-link {
+    width: 100%;
+    justify-content: center;
+    text-align: center;
   }
 
   .footer-column h3 {
