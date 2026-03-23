@@ -1007,9 +1007,14 @@ body.menu-open .menu-toggle span:nth-child(3) {
 }
 
 .footer-review-column {
-  max-width: 270px;
+  max-width: 340px;
   justify-self: center;
   text-align: center;
+}
+
+.footer-review-column p {
+  max-width: 32ch;
+  margin-inline: auto;
 }
 
 .footer-grid > .footer-column:last-child {
