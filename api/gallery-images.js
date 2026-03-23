@@ -8,6 +8,7 @@ function matchesGalleryFolder(item) {
   const publicId = String(item?.public_id || "");
   const folder = String(item?.folder || "");
   const assetFolder = String(item?.asset_folder || "");
+  const tags = Array.isArray(item?.tags) ? item.tags.map((tag) => String(tag || "").trim().replace(/^\/+|\/+$/g, "")) : [];
 
   return (
     publicId.startsWith(`${NORMALIZED_GALLERY_PREFIX}/`) ||
@@ -15,7 +16,8 @@ function matchesGalleryFolder(item) {
     folder === NORMALIZED_GALLERY_PREFIX ||
     folder.startsWith(`${NORMALIZED_GALLERY_PREFIX}/`) ||
     assetFolder === NORMALIZED_GALLERY_PREFIX ||
-    assetFolder.startsWith(`${NORMALIZED_GALLERY_PREFIX}/`)
+    assetFolder.startsWith(`${NORMALIZED_GALLERY_PREFIX}/`) ||
+    tags.includes(NORMALIZED_GALLERY_PREFIX)
   );
 }
 module.exports = async function handler(req, res) {

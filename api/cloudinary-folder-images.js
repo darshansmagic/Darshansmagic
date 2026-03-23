@@ -11,13 +11,15 @@ function matchesFolder(item, folder) {
   const publicId = String(item?.public_id || "");
   const assetFolder = normalizeFolder(item?.asset_folder || "");
   const itemFolder = normalizeFolder(item?.folder || "");
+  const tags = Array.isArray(item?.tags) ? item.tags.map((tag) => normalizeFolder(tag)) : [];
 
   return (
     publicId.startsWith(`${normalizedFolder}/`) ||
     assetFolder === normalizedFolder ||
     assetFolder.startsWith(`${normalizedFolder}/`) ||
     itemFolder === normalizedFolder ||
-    itemFolder.startsWith(`${normalizedFolder}/`)
+    itemFolder.startsWith(`${normalizedFolder}/`) ||
+    tags.includes(normalizedFolder)
   );
 }
 
@@ -38,8 +40,7 @@ module.exports = async function handler(req, res) {
 
   const auth = Buffer.from(`${CLOUDINARY_API_KEY}:${CLOUDINARY_API_SECRET}`).toString("base64");
   const query = new URLSearchParams({
-    max_results: "100",
-    prefix: `${folder}/`
+    max_results: "100"
   });
   const endpoint = `https://api.cloudinary.com/v1_1/${CLOUDINARY_CLOUD_NAME}/resources/image/upload?${query.toString()}`;
 
