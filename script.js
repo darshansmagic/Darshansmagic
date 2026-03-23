@@ -157,6 +157,11 @@ function usesSingleTapFolderOpen() {
   );
 }
 
+function getCloudinaryFolderDisplayName(folderName = "") {
+  const parts = String(folderName || "").split("/").filter(Boolean);
+  return parts[parts.length - 1] || folderName || "Folder";
+}
+
 function setupTestimonialLoop() {
   if (!testimonialTrack) return;
 
@@ -461,7 +466,7 @@ function syncRootLinksAndLists() {
 function setActiveCloudinaryFolder(folderName = "") {
   activeCloudinaryFolder = folderName || "darshan-magic/gallery";
   selectedCloudinaryFolder = activeCloudinaryFolder;
-  const activeFolderLabel = activeCloudinaryFolder.split("/").filter(Boolean).pop() || activeCloudinaryFolder;
+  const activeFolderLabel = getCloudinaryFolderDisplayName(activeCloudinaryFolder);
 
   if (cloudinaryActiveFolderLabel) {
     cloudinaryActiveFolderLabel.textContent = activeFolderLabel;
@@ -507,7 +512,7 @@ function renderCloudinaryFolderList(folders = []) {
     ? visibleFolders.map((folder) => `
       <button class="upload-folder-item${folder === activeCloudinaryFolder ? " is-active" : ""}${folder === selectedCloudinaryFolder ? " is-selected" : ""}" type="button" data-folder="${escapeHtml(folder)}">
         <span class="upload-folder-icon">Folder</span>
-        <span class="upload-folder-name">${escapeHtml(folder)}</span>
+        <span class="upload-folder-name" title="${escapeHtml(folder)}">${escapeHtml(getCloudinaryFolderDisplayName(folder))}</span>
       </button>
     `).join("")
     : '<article class="upload-result-empty">No matching folders.</article>';
@@ -536,24 +541,14 @@ function renderCloudinaryFolderList(folders = []) {
       const folder = String(button.getAttribute("data-folder") || "").trim();
       if (!folder) return;
 
-      if (root === cloudinaryFolderChipList || root === cloudinaryFolderSheetList || usesSingleTapFolderOpen()) {
-        button.addEventListener("click", () => {
-          loadCloudinaryFolderImages(folder);
-          closeCloudinaryFolderSheet();
-        });
-        return;
-      }
-
       button.addEventListener("click", () => {
-        setSelectedCloudinaryFolder(folder);
+        loadCloudinaryFolderImages(folder);
+        closeCloudinaryFolderSheet();
       });
 
       button.addEventListener("dblclick", () => {
-        const folder = String(button.getAttribute("data-folder") || "").trim();
-        if (folder) {
-          loadCloudinaryFolderImages(folder);
-          closeCloudinaryFolderSheet();
-        }
+        loadCloudinaryFolderImages(folder);
+        closeCloudinaryFolderSheet();
       });
     });
   };
@@ -1315,14 +1310,8 @@ cloudinaryRootFolderLinks.forEach((button) => {
   button.addEventListener("click", () => {
     const folder = String(button.getAttribute("data-folder") || "").trim();
     if (!folder) return;
-
-    if (usesSingleTapFolderOpen()) {
-      loadCloudinaryFolderImages(folder);
-      closeCloudinaryFolderSheet();
-      return;
-    }
-
-    setSelectedCloudinaryFolder(folder);
+    loadCloudinaryFolderImages(folder);
+    closeCloudinaryFolderSheet();
   });
 
   button.addEventListener("dblclick", () => {

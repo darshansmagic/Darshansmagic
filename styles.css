@@ -2638,6 +2638,10 @@ body.upload-modal-open {
     grid-template-columns: repeat(4, minmax(0, 1fr));
   }
 
+  .admin-upload-page .upload-folder-breadcrumbs {
+    display: none;
+  }
+
   .admin-content-body {
     grid-template-rows: auto minmax(0, 1fr);
     min-height: calc(100vh - 250px);
