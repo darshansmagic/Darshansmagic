@@ -216,6 +216,48 @@ function escapeHtml(value = "") {
     .replace(/'/g, "&#39;");
 }
 
+function slugifyFolderSegment(value = "") {
+  return String(value)
+    .trim()
+    .toLowerCase()
+    .replace(/['"]/g, "")
+    .replace(/[^a-z0-9/_ -]+/g, "")
+    .replace(/[ _]+/g, "-")
+    .replace(/-+/g, "-")
+    .replace(/^\/+|\/+$/g, "");
+}
+
+function normalizeCloudinaryFolder(input = "") {
+  const rawValue = String(input || "").trim();
+  if (!rawValue) {
+    return {
+      assetFolder: "darshan-magic/gallery",
+      publicIdPrefix: "darshan-magic/gallery"
+    };
+  }
+
+  if (rawValue.includes("/")) {
+    const normalizedPath = rawValue
+      .split("/")
+      .map((segment) => slugifyFolderSegment(segment))
+      .filter(Boolean)
+      .join("/");
+
+    return {
+      assetFolder: normalizedPath || "darshan-magic/gallery",
+      publicIdPrefix: normalizedPath || "darshan-magic/gallery"
+    };
+  }
+
+  const eventSlug = slugifyFolderSegment(rawValue);
+  const normalizedEventPath = eventSlug ? `darshan-magic/events/${eventSlug}` : "darshan-magic/gallery";
+
+  return {
+    assetFolder: normalizedEventPath,
+    publicIdPrefix: normalizedEventPath
+  };
+}
+
 function renderUploadResults(items) {
   if (!cloudinaryUploadResults) return;
 
@@ -274,11 +316,14 @@ async function loadCloudinaryFolders() {
 
 async function uploadSinglePhoto(file, config, folderName) {
   const formData = new FormData();
+  const normalizedFolder = normalizeCloudinaryFolder(folderName);
   formData.append("file", file);
   formData.append("upload_preset", config.uploadPreset);
-  formData.append("folder", folderName || "darshan-magic");
+  formData.append("asset_folder", normalizedFolder.assetFolder);
+  formData.append("public_id_prefix", normalizedFolder.publicIdPrefix);
+  formData.append("folder", normalizedFolder.publicIdPrefix);
 
-  const trimmedFolder = String(folderName || "").trim();
+  const trimmedFolder = String(normalizedFolder.publicIdPrefix || "").trim();
   if (trimmedFolder) {
     formData.append("tags", trimmedFolder.toLowerCase().replace(/[^\w/-]+/g, "-"));
   }
@@ -584,7 +629,9 @@ if (cloudinaryUploadForm) {
     const fileInput = cloudinaryUploadForm.querySelector('input[type="file"]');
     const newFolderNameInput = cloudinaryUploadForm.querySelector('input[name="newFolderName"]');
     const files = Array.from(fileInput?.files || []);
-    const folderName = String(newFolderNameInput?.value || "").trim() || String(cloudinaryExistingFolder?.value || "").trim();
+    const requestedFolderName = String(newFolderNameInput?.value || "").trim() || String(cloudinaryExistingFolder?.value || "").trim();
+    const normalizedFolder = normalizeCloudinaryFolder(requestedFolderName);
+    const folderName = normalizedFolder.publicIdPrefix;
 
     if (!files.length) {
       if (cloudinaryUploadStatus) {

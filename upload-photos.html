@@ -39,10 +39,11 @@
               <div class="cta-copy upload-copy">
                 <p class="eyebrow">Admin Uploads</p>
                 <h2>Upload performance photos from any device.</h2>
-                <p>Choose one or more photos, set the Cloudinary folder you want them stored in, and upload them directly. This page is intended for admin use only.</p>
+                <p>Choose one or more photos, pick an existing folder or type a new event name, and upload them directly. This page is intended for admin use only.</p>
                 <div class="upload-note-list">
                   <p>Supported flow: direct unsigned uploads through Cloudinary.</p>
-                  <p>Use folders such as <strong>darshan-magic/homepage</strong> or <strong>darshan-magic/events/birthday-party</strong>.</p>
+                  <p>If you type a plain event name like <strong>Birthday Party</strong>, it will upload to <strong>darshan-magic/events/birthday-party</strong>.</p>
+                  <p>Leave the new-folder field empty if you want to use the dropdown selection as-is.</p>
                 </div>
               </div>
 
@@ -57,7 +58,7 @@
 
                   <label class="field field-full">
                     <span>Or create new folder</span>
-                    <input type="text" name="newFolderName" placeholder="darshan-magic/events/birthday-party">
+                    <input type="text" name="newFolderName" placeholder="Birthday Party or darshan-magic/events/birthday-party">
                   </label>
 
                   <label class="field field-full">
