@@ -277,10 +277,70 @@
       <section class="section cta-section" id="contact">
         <div class="container">
           <div class="cta-panel" data-reveal>
-            <p class="eyebrow">Enquiries &amp; Bookings</p>
-            <h2>Bring a polished sense of wonder to your next Sydney event.</h2>
-            <p>For weddings, private parties, birthdays, engagement celebrations, and corporate entertainment, Darshan's Magic offers a refined live experience designed to leave a lasting impression.</p>
-            <a class="button button-primary" href="mailto:darsar@gmail.com">Book a Show</a>
+            <div class="cta-layout">
+              <div class="cta-copy">
+                <p class="eyebrow">Enquiries &amp; Bookings</p>
+                <h2>Enquire about your event.</h2>
+                <p>Share a few details about your date, event style, and location, and Darshan's Magic can come back to you with availability and the right performance option for your celebration.</p>
+
+                <div class="contact-mini-list">
+                  <a href="mailto:darsaranya@gmail.com">darsaranya@gmail.com</a>
+                  <a href="tel:+61420786767">+61 420 786 767</a>
+                  <span>Sydney, Australia</span>
+                </div>
+              </div>
+
+              <form class="booking-form" id="booking-form" method="post" action="/api/enquiry">
+                <div class="booking-grid">
+                  <label class="field">
+                    <span>Full name</span>
+                    <input type="text" name="name" autocomplete="name" placeholder="Your name" required>
+                  </label>
+
+                  <label class="field">
+                    <span>Email</span>
+                    <input type="email" name="email" autocomplete="email" placeholder="you@example.com" required>
+                  </label>
+
+                  <label class="field">
+                    <span>Phone</span>
+                    <input type="tel" name="phone" autocomplete="tel" placeholder="+61 ..." required>
+                  </label>
+
+                  <label class="field">
+                    <span>Event type</span>
+                    <select name="eventType" required>
+                      <option value="">Select event type</option>
+                      <option>Wedding</option>
+                      <option>Engagement celebration</option>
+                      <option>Birthday</option>
+                      <option>Private party</option>
+                      <option>Corporate event</option>
+                      <option>Cocktail reception</option>
+                      <option>Gala dinner</option>
+                      <option>Other</option>
+                    </select>
+                  </label>
+
+                  <label class="field">
+                    <span>Event date</span>
+                    <input type="date" name="eventDate">
+                  </label>
+
+                  <label class="field">
+                    <span>Location</span>
+                    <input type="text" name="location" placeholder="Sydney suburb or venue">
+                  </label>
+
+                  <label class="field field-full">
+                    <span>Message</span>
+                    <textarea name="message" rows="5" placeholder="Tell us about your event, guest count, timing, and anything else helpful."></textarea>
+                  </label>
+                </div>
+
+                <button class="button button-primary booking-submit" type="submit">Send Enquiry</button>
+              </form>
+            </div>
           </div>
         </div>
       </section>
@@ -305,7 +365,7 @@
         <div class="footer-column">
           <h3>Contact</h3>
           <span>Sydney, Australia</span>
-          <a href="mailto:darsar@gmail.com">darsar@gmail.com</a>
+          <a href="mailto:darsaranya@gmail.com">darsaranya@gmail.com</a>
           <a href="tel:+61420786767">+61 420 786 767</a>
           <a href="https://www.facebook.com/darshanmagic" target="_blank" rel="noreferrer">Facebook</a>
         </div>

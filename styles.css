@@ -711,12 +711,23 @@ body.menu-open .menu-toggle span:nth-child(3) {
 
 .cta-panel {
   padding: 4.5rem 2rem;
-  text-align: center;
   border-radius: var(--radius-xl);
   background:
     radial-gradient(circle at top right, rgba(201, 166, 107, 0.12), transparent 28%),
     linear-gradient(135deg, var(--dark) 0%, var(--dark-alt) 58%, var(--dark-edge) 100%);
   box-shadow: var(--shadow-rich);
+}
+
+.cta-layout {
+  display: grid;
+  grid-template-columns: minmax(0, 0.98fr) minmax(0, 1.02fr);
+  gap: 1.5rem;
+  align-items: center;
+}
+
+.cta-copy {
+  padding-top: 0;
+  max-width: 540px;
 }
 
 .cta-panel h2 {
@@ -725,8 +736,8 @@ body.menu-open .menu-toggle span:nth-child(3) {
 }
 
 .cta-panel p {
-  max-width: 700px;
-  margin: 0 auto 1.8rem;
+  max-width: 520px;
+  margin: 0 0 1.4rem;
   color: rgba(245, 237, 231, 0.76);
 }
 
@@ -734,9 +745,109 @@ body.menu-open .menu-toggle span:nth-child(3) {
   color: rgba(245, 237, 231, 0.68);
 }
 
+.contact-mini-list {
+  display: grid;
+  gap: 0.75rem;
+}
+
+.contact-mini-list a,
+.contact-mini-list span {
+  color: rgba(245, 237, 231, 0.9);
+  font-size: 0.96rem;
+}
+
+.booking-form {
+  padding: 1.4rem;
+  border-radius: 28px;
+  background: rgba(255, 249, 245, 0.06);
+  border: 1px solid rgba(245, 237, 231, 0.12);
+  backdrop-filter: blur(12px);
+}
+
+.booking-grid {
+  display: grid;
+  grid-template-columns: repeat(2, minmax(0, 1fr));
+  gap: 1rem;
+}
+
+.field {
+  display: grid;
+  gap: 0.45rem;
+}
+
+.field span {
+  color: rgba(245, 237, 231, 0.88);
+  font-size: 0.82rem;
+  font-weight: 600;
+  letter-spacing: 0.06em;
+  text-transform: uppercase;
+}
+
+.field input,
+.field select,
+.field textarea {
+  width: 100%;
+  border: 1px solid rgba(245, 237, 231, 0.14);
+  background: rgba(255, 255, 255, 0.06);
+  color: var(--text-on-dark);
+  border-radius: 18px;
+  padding: 0.95rem 1rem;
+  outline: none;
+  transition: border-color 0.2s ease, background-color 0.2s ease;
+}
+
+.field input::placeholder,
+.field textarea::placeholder {
+  color: rgba(245, 237, 231, 0.42);
+}
+
+.field select {
+  appearance: none;
+  color: var(--text-on-dark);
+  color-scheme: dark;
+  background-image:
+    linear-gradient(45deg, transparent 50%, rgba(245, 237, 231, 0.72) 50%),
+    linear-gradient(135deg, rgba(245, 237, 231, 0.72) 50%, transparent 50%);
+  background-position:
+    calc(100% - 24px) calc(50% - 3px),
+    calc(100% - 18px) calc(50% - 3px);
+  background-size: 6px 6px, 6px 6px;
+  background-repeat: no-repeat;
+  padding-right: 3rem;
+}
+
+.field select option {
+  color: var(--text-on-dark);
+  background: #33272f;
+}
+
+.field select option[value=""] {
+  color: rgba(245, 237, 231, 0.52);
+}
+
+.field input:focus,
+.field select:focus,
+.field textarea:focus {
+  border-color: rgba(201, 166, 107, 0.48);
+  background: rgba(255, 255, 255, 0.08);
+}
+
+.field textarea {
+  resize: vertical;
+  min-height: 140px;
+}
+
+.field-full {
+  grid-column: 1 / -1;
+}
+
+.booking-submit {
+  margin-top: 1rem;
+}
+
 .site-footer {
   margin-top: 1rem;
-  padding: 4rem 0 2rem;
+  padding: 2.75rem 0 1.4rem;
   background: linear-gradient(180deg, #140b17 0%, #0F0A12 100%);
   color: var(--text-on-dark);
 }
@@ -744,15 +855,15 @@ body.menu-open .menu-toggle span:nth-child(3) {
 .footer-grid {
   display: grid;
   grid-template-columns: 1.2fr 0.8fr 0.9fr;
-  gap: 2rem;
+  gap: 1.4rem;
   align-items: start;
 }
 
 .footer-logo {
-  width: 200px;
+  width: 148px;
   height: auto;
   object-fit: contain;
-  margin-bottom: 1rem;
+  margin-bottom: 0.7rem;
 }
 
 .footer-brand p {
@@ -762,13 +873,13 @@ body.menu-open .menu-toggle span:nth-child(3) {
 
 .footer-column {
   display: grid;
-  gap: 0.7rem;
+  gap: 0.5rem;
 }
 
 .footer-column h3 {
-  margin-bottom: 0.5rem;
+  margin-bottom: 0.3rem;
   color: var(--text-on-dark);
-  font-size: 1.1rem;
+  font-size: 1rem;
 }
 
 .footer-column a,
@@ -782,8 +893,8 @@ body.menu-open .menu-toggle span:nth-child(3) {
 }
 
 .footer-bottom {
-  margin-top: 2rem;
-  padding-top: 1.5rem;
+  margin-top: 1.4rem;
+  padding-top: 1rem;
   display: flex;
   justify-content: space-between;
   gap: 1rem;
@@ -823,6 +934,10 @@ body.menu-open .menu-toggle span:nth-child(3) {
 
   .about-photo {
     height: auto;
+  }
+
+  .cta-layout {
+    grid-template-columns: 1fr;
   }
 
   .hero {
@@ -989,6 +1104,10 @@ body.menu-open .menu-toggle span:nth-child(3) {
 
   .cta-panel {
     padding: 3.5rem 1.2rem;
+  }
+
+  .booking-grid {
+    grid-template-columns: 1fr;
   }
 
   .footer-grid {
