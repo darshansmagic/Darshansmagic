@@ -1,8 +1,6 @@
 const CLOUDINARY_CLOUD_NAME = process.env.CLOUDINARY_CLOUD_NAME;
 const CLOUDINARY_API_KEY = process.env.CLOUDINARY_API_KEY;
 const CLOUDINARY_API_SECRET = process.env.CLOUDINARY_API_SECRET;
-const DEFAULT_GALLERY_FOLDER = process.env.CLOUDINARY_GALLERY_FOLDER || "darshan-magic/gallery";
-
 module.exports = async function handler(req, res) {
   if (req.method !== "GET") {
     res.setHeader("Allow", "GET");
@@ -14,8 +12,7 @@ module.exports = async function handler(req, res) {
   }
 
   const auth = Buffer.from(`${CLOUDINARY_API_KEY}:${CLOUDINARY_API_SECRET}`).toString("base64");
-  const prefix = `${DEFAULT_GALLERY_FOLDER.replace(/\/+$/, "")}/`;
-  const endpoint = `https://api.cloudinary.com/v1_1/${CLOUDINARY_CLOUD_NAME}/resources/image/upload?prefix=${encodeURIComponent(prefix)}&max_results=12`;
+  const endpoint = `https://api.cloudinary.com/v1_1/${CLOUDINARY_CLOUD_NAME}/resources/image/upload?max_results=30`;
 
   try {
     const response = await fetch(endpoint, {
@@ -40,7 +37,6 @@ module.exports = async function handler(req, res) {
       : [];
 
     return res.status(200).json({
-      folder: DEFAULT_GALLERY_FOLDER,
       images
     });
   } catch (error) {
