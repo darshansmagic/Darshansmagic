@@ -1007,14 +1007,9 @@ body.menu-open .menu-toggle span:nth-child(3) {
 }
 
 .footer-review-column {
-  max-width: 340px;
+  max-width: 360px;
   justify-self: center;
   text-align: center;
-}
-
-.footer-review-column p {
-  max-width: 32ch;
-  margin-inline: auto;
 }
 
 .footer-grid > .footer-column:last-child {
