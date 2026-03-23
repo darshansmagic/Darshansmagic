@@ -141,11 +141,16 @@ const cloudinaryOpenFolderSheetButtons = [
 const cloudinaryCloseFolderSheetButton = document.getElementById("cloudinary-close-folder-sheet");
 const cloudinaryRootFolderLinks = Array.from(document.querySelectorAll(".admin-root-link"));
 const CLOUDINARY_FOLDER_STORAGE_KEY = "darshans-magic-active-folder";
+const HOMEPAGE_GALLERY_TILE_COUNT = 5;
+const HOMEPAGE_GALLERY_ROTATE_MS = 3000;
 let availableCloudinaryFolders = [];
 let activeCloudinaryFolder = "darshan-magic/gallery";
 let selectedCloudinaryFolder = "darshan-magic/gallery";
 let selectedCloudinaryPublicIds = new Set();
 let cloudinaryFolderFilter = "";
+let homepageGalleryItems = [];
+let homepageGalleryStartIndex = 0;
+let homepageGalleryInterval = null;
 
 function usesSingleTapFolderOpen() {
   return Boolean(
@@ -230,13 +235,11 @@ function createEmptyTestimonialCard(message) {
 function createGalleryCard(url, alt, isLarge) {
   const figure = document.createElement("figure");
   figure.className = `gallery-card${isLarge ? " gallery-card-large" : ""}`;
-  figure.setAttribute("data-reveal", "");
 
   const image = document.createElement("img");
   image.src = url;
   image.alt = alt;
   figure.appendChild(image);
-  registerRevealElement(figure);
 
   return figure;
 }
@@ -258,6 +261,43 @@ function createGalleryEmptyState(message) {
   figure.className = "gallery-card gallery-card-empty";
   figure.textContent = message;
   return figure;
+}
+
+function getGalleryWindow(items = [], count = HOMEPAGE_GALLERY_TILE_COUNT, startIndex = 0) {
+  if (!items.length) return [];
+  if (items.length <= count) return items.slice(0, count);
+
+  const windowItems = [];
+  for (let index = 0; index < count; index += 1) {
+    windowItems.push(items[(startIndex + index) % items.length]);
+  }
+  return windowItems;
+}
+
+function renderHomepageGalleryGrid() {
+  if (!galleryGrid) return;
+
+  if (!homepageGalleryItems.length) {
+    galleryGrid.innerHTML = "";
+    galleryGrid.appendChild(createGalleryEmptyState("Upload photos in Cloudinary and they will appear here."));
+    return;
+  }
+
+  const visibleItems = getGalleryWindow(homepageGalleryItems, HOMEPAGE_GALLERY_TILE_COUNT, homepageGalleryStartIndex);
+  galleryGrid.innerHTML = "";
+  visibleItems.forEach((item, index) => {
+    galleryGrid.appendChild(createGalleryCard(item.url, item.alt, index === 0));
+  });
+}
+
+function startHomepageGalleryRotation() {
+  clearInterval(homepageGalleryInterval);
+  if (!galleryGrid || homepageGalleryItems.length <= HOMEPAGE_GALLERY_TILE_COUNT) return;
+
+  homepageGalleryInterval = window.setInterval(() => {
+    homepageGalleryStartIndex = (homepageGalleryStartIndex + 1) % homepageGalleryItems.length;
+    renderHomepageGalleryGrid();
+  }, HOMEPAGE_GALLERY_ROTATE_MS);
 }
 
 function escapeHtml(value = "") {
@@ -866,6 +906,8 @@ async function loadGalleryImages() {
     const payload = await response.json().catch(() => ({}));
 
     if (!response.ok || !Array.isArray(payload.images) || !payload.images.length) {
+      homepageGalleryItems = [];
+      clearInterval(homepageGalleryInterval);
       if (galleryGrid) {
         galleryGrid.innerHTML = "";
         galleryGrid.appendChild(createGalleryEmptyState("Upload photos in Cloudinary and they will appear here."));
@@ -873,34 +915,26 @@ async function loadGalleryImages() {
       return;
     }
 
-    const sourceItems = payload.images.slice(0, 6).map((item, index) => ({
+    homepageGalleryItems = payload.images.map((item, index) => ({
       url: item.secure_url,
       alt: `Darshan's Magic performance photo ${index + 1}`
     }));
-    const items = [];
-
-    while (items.length < 6 && sourceItems.length) {
-      sourceItems.forEach((item) => {
-        if (items.length < 6) {
-          items.push(item);
-        }
-      });
-    }
+    homepageGalleryStartIndex = 0;
 
     if (galleryGrid) {
-      galleryGrid.innerHTML = "";
-      items.forEach((item, index) => {
-        galleryGrid.appendChild(createGalleryCard(item.url, item.alt, index === 0));
-      });
+      renderHomepageGalleryGrid();
+      startHomepageGalleryRotation();
     }
 
     if (galleryStack) {
       galleryStack.innerHTML = "";
-      items.forEach((item) => {
+      homepageGalleryItems.forEach((item) => {
         galleryStack.appendChild(createGalleryStackCard(item.url, item.alt));
       });
     }
   } catch {
+    homepageGalleryItems = [];
+    clearInterval(homepageGalleryInterval);
     if (galleryGrid) {
       galleryGrid.innerHTML = "";
       galleryGrid.appendChild(createGalleryEmptyState("We could not load Cloudinary photos right now."));
