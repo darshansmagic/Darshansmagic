@@ -109,6 +109,7 @@ const cloudinaryUploadStatus = document.getElementById("cloudinary-upload-status
 const cloudinaryUploadResults = document.getElementById("cloudinary-upload-results");
 const cloudinaryExistingFolder = document.getElementById("cloudinary-existing-folder");
 const cloudinaryActiveFolderLabel = document.getElementById("cloudinary-active-folder");
+const CLOUDINARY_FOLDER_STORAGE_KEY = "darshans-magic-active-folder";
 
 function setupTestimonialLoop() {
   if (!testimonialTrack) return;
@@ -282,6 +283,16 @@ function setActiveCloudinaryFolder(folderName = "") {
   cloudinaryActiveFolderLabel.textContent = folderName || "darshan-magic/gallery";
 }
 
+function saveActiveCloudinaryFolder(folderName = "") {
+  if (!folderName || typeof window === "undefined" || !window.localStorage) return;
+  window.localStorage.setItem(CLOUDINARY_FOLDER_STORAGE_KEY, folderName);
+}
+
+function getSavedCloudinaryFolder() {
+  if (typeof window === "undefined" || !window.localStorage) return "";
+  return String(window.localStorage.getItem(CLOUDINARY_FOLDER_STORAGE_KEY) || "").trim();
+}
+
 async function getCloudinaryConfig() {
   const response = await fetch("/api/cloudinary-config", {
     headers: {
@@ -344,6 +355,7 @@ async function loadCloudinaryFolderImages(folderName) {
 
   const normalizedFolder = normalizeCloudinaryFolder(folderName).publicIdPrefix;
   setActiveCloudinaryFolder(normalizedFolder);
+  saveActiveCloudinaryFolder(normalizedFolder);
   cloudinaryUploadResults.innerHTML = '<article class="upload-result-empty">Loading folder photos...</article>';
 
   try {
@@ -760,7 +772,15 @@ if (cloudinaryExistingFolder) {
 
 loadCloudinaryFolders().then(() => {
   if (cloudinaryUploadResults) {
-    const initialFolder = String(cloudinaryExistingFolder?.value || "darshan-magic/gallery").trim();
+    const savedFolder = getSavedCloudinaryFolder();
+    if (cloudinaryExistingFolder && savedFolder) {
+      const matchingOption = Array.from(cloudinaryExistingFolder.options).find((option) => option.value === savedFolder);
+      if (matchingOption) {
+        cloudinaryExistingFolder.value = savedFolder;
+      }
+    }
+
+    const initialFolder = String(cloudinaryExistingFolder?.value || savedFolder || "darshan-magic/gallery").trim();
     loadCloudinaryFolderImages(initialFolder);
   }
 });
