@@ -1324,12 +1324,18 @@ body.menu-open .menu-toggle span:nth-child(3) {
 
   .footer-review-column {
     max-width: 100%;
+    justify-self: stretch;
+    text-align: left;
   }
 
   .footer-review-link {
     width: 100%;
     justify-content: center;
     text-align: center;
+  }
+
+  .footer-grid > .footer-column:last-child {
+    justify-self: stretch;
   }
 
   .footer-column h3 {
