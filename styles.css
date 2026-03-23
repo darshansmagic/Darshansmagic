@@ -1319,7 +1319,7 @@ body.menu-open .menu-toggle span:nth-child(3) {
   }
 
   .footer-brand p {
-    display: block;
+    display: none;
     max-width: 100%;
     font-size: 0.92rem;
     line-height: 1.55;
