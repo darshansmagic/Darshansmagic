@@ -121,6 +121,7 @@ const cloudinaryExplorerUploadInput = document.getElementById("cloudinary-explor
 const cloudinaryFolderBreadcrumbs = document.getElementById("cloudinary-folder-breadcrumbs");
 const cloudinaryFolderMeta = document.getElementById("cloudinary-folder-meta");
 const cloudinaryFolderSearchInput = document.getElementById("cloudinary-folder-search");
+const cloudinaryFolderSearchSheetInput = document.getElementById("cloudinary-folder-search-sheet");
 const cloudinaryDropzone = document.getElementById("cloudinary-dropzone");
 const cloudinarySelectionBar = document.getElementById("cloudinary-selection-bar");
 const cloudinarySelectionCount = document.getElementById("cloudinary-selection-count");
@@ -370,7 +371,7 @@ function renderUploadResults(items) {
   updateDeleteSelectedButton();
 
   if (!items.length) {
-    cloudinaryUploadResults.innerHTML = '<article class="upload-result-empty">This folder is empty. Upload photos into it or choose another folder.</article>';
+    cloudinaryUploadResults.innerHTML = '<article class="upload-result-empty">No photos in this folder yet.</article>';
     return;
   }
 
@@ -530,6 +531,9 @@ function setFolderSearchValue(value = "") {
   cloudinaryFolderFilter = String(value || "");
   if (cloudinaryFolderSearchInput && cloudinaryFolderSearchInput.value !== cloudinaryFolderFilter) {
     cloudinaryFolderSearchInput.value = cloudinaryFolderFilter;
+  }
+  if (cloudinaryFolderSearchSheetInput && cloudinaryFolderSearchSheetInput.value !== cloudinaryFolderFilter) {
+    cloudinaryFolderSearchSheetInput.value = cloudinaryFolderFilter;
   }
   renderCloudinaryFolderList(availableCloudinaryFolders);
 }
@@ -1246,6 +1250,12 @@ if (cloudinaryClearSelectionButton) {
 
 if (cloudinaryFolderSearchInput) {
   cloudinaryFolderSearchInput.addEventListener("input", (event) => {
+    setFolderSearchValue(event.target.value || "");
+  });
+}
+
+if (cloudinaryFolderSearchSheetInput) {
+  cloudinaryFolderSearchSheetInput.addEventListener("input", (event) => {
     setFolderSearchValue(event.target.value || "");
   });
 }

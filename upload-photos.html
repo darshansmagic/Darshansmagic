@@ -31,28 +31,7 @@
       </header>
 
       <main class="admin-main">
-        <section class="admin-toolbar-card">
-          <div class="admin-toolbar-copy">
-            <h1>Photo Uploads</h1>
-            <p>Choose a folder, upload from your phone, and manage photos quickly.</p>
-          </div>
-
-          <div class="admin-toolbar-actions">
-            <button class="button button-primary" id="cloudinary-open-upload-panel" type="button">Upload Photos</button>
-            <button class="button button-secondary" id="cloudinary-refresh-folder" type="button">Refresh</button>
-            <button class="button button-secondary" id="cloudinary-create-folder" type="button">New Folder</button>
-          </div>
-        </section>
-
         <section class="admin-folder-strip">
-          <div class="admin-folder-strip-head">
-            <label class="admin-search" for="cloudinary-folder-search">
-              <span>Search folders</span>
-              <input id="cloudinary-folder-search" type="search" placeholder="Search folders">
-            </label>
-            <button class="button button-secondary admin-desktop-folder-toggle" id="cloudinary-toggle-folder-sheet-desktop" type="button">All Folders</button>
-          </div>
-
           <div class="admin-folder-chips" id="cloudinary-folder-chip-list">
             <article class="upload-result-empty">Loading folders...</article>
           </div>
@@ -62,6 +41,9 @@
           <aside class="admin-sidebar">
             <div class="admin-sidebar-head">
               <p class="admin-sidebar-title">Folders</p>
+              <label class="admin-search" for="cloudinary-folder-search">
+                <input id="cloudinary-folder-search" type="search" placeholder="Search folders">
+              </label>
             </div>
             <div class="upload-folder-list admin-folder-list" id="cloudinary-folder-list">
               <article class="upload-result-empty">Loading folders...</article>
@@ -69,17 +51,18 @@
           </aside>
 
           <div class="admin-content">
-            <section class="admin-context-card">
+            <section class="admin-content-toolbar">
               <div class="admin-context-copy">
-                <p class="admin-section-label">Selected folder</p>
-                <p class="upload-folder-current">Viewing folder: <strong id="cloudinary-active-folder">darshan-magic/gallery</strong></p>
                 <div class="upload-folder-breadcrumbs" id="cloudinary-folder-breadcrumbs"></div>
+                <p class="upload-folder-current"><strong id="cloudinary-active-folder">darshan-magic/gallery</strong></p>
                 <p class="upload-folder-meta" id="cloudinary-folder-meta">Loading folder contents...</p>
               </div>
 
               <div class="admin-context-actions">
-                <button class="button button-primary" id="cloudinary-upload-here" type="button">Upload Here</button>
-                <button class="button button-danger" id="cloudinary-delete-selected" type="button" disabled>Delete Selected</button>
+                <button class="button button-secondary" id="cloudinary-refresh-folder" type="button">Refresh</button>
+                <button class="button button-secondary" id="cloudinary-create-folder" type="button">New Folder</button>
+                <button class="button button-primary" id="cloudinary-upload-here" type="button">Upload</button>
+                <button class="button button-danger" id="cloudinary-delete-selected" type="button" disabled>Delete</button>
               </div>
             </section>
 
@@ -121,6 +104,9 @@
             <h2 id="cloudinary-folder-sheet-title">Folders</h2>
             <button class="admin-sheet-close" id="cloudinary-close-folder-sheet" type="button">Close</button>
           </div>
+          <label class="admin-search admin-search-sheet" for="cloudinary-folder-search-sheet">
+            <input id="cloudinary-folder-search-sheet" type="search" placeholder="Search folders">
+          </label>
           <div class="upload-folder-list admin-folder-sheet-list" id="cloudinary-folder-sheet-list">
             <article class="upload-result-empty">Loading folders...</article>
           </div>
