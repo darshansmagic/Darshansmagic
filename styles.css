@@ -1250,12 +1250,12 @@ body.menu-open .menu-toggle span:nth-child(3) {
 
   .testimonial-stack-list .testimonial-card {
     position: sticky;
-    top: calc(var(--header-height) + 0.75rem);
+    top: calc(var(--header-height) + 1rem);
     padding: 0;
   }
 
   .testimonial-stack-list .testimonial-card + .testimonial-card {
-    margin-top: -0.9rem;
+    margin-top: 1rem;
   }
 
   .testimonial-stack-list .testimonial-card:nth-child(1) { z-index: 1; }
