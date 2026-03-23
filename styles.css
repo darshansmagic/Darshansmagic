@@ -1384,6 +1384,10 @@ body.upload-modal-open {
   transform: translateY(0);
 }
 
+[hidden] {
+  display: none !important;
+}
+
 @media (max-width: 1120px) {
   .about-grid {
     grid-template-columns: 1fr;
@@ -2371,6 +2375,14 @@ body.upload-modal-open {
   border-color: rgba(47, 35, 39, 0.06);
   box-shadow: none;
   transform: none;
+}
+
+.admin-upload-page .upload-folder-item.is-selected:not(.is-active) {
+  background: #f6f1ef;
+}
+
+.admin-upload-page .upload-folder-item.is-active {
+  box-shadow: inset 2px 0 0 #7a3445;
 }
 
 .admin-upload-page .upload-folder-icon {

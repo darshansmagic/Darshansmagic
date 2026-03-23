@@ -142,8 +142,19 @@ const cloudinaryCloseFolderSheetButton = document.getElementById("cloudinary-clo
 const CLOUDINARY_FOLDER_STORAGE_KEY = "darshans-magic-active-folder";
 let availableCloudinaryFolders = [];
 let activeCloudinaryFolder = "darshan-magic/gallery";
+let selectedCloudinaryFolder = "darshan-magic/gallery";
 let selectedCloudinaryPublicIds = new Set();
 let cloudinaryFolderFilter = "";
+
+function usesSingleTapFolderOpen() {
+  return Boolean(
+    typeof window !== "undefined" && (
+      window.matchMedia?.("(pointer: coarse)").matches ||
+      window.matchMedia?.("(hover: none)").matches ||
+      navigator.maxTouchPoints > 0
+    )
+  );
+}
 
 function setupTestimonialLoop() {
   if (!testimonialTrack) return;
@@ -298,10 +309,12 @@ function updateDeleteSelectedButton() {
   const count = selectedCloudinaryPublicIds.size;
   if (cloudinaryDeleteSelectedButton) {
     cloudinaryDeleteSelectedButton.disabled = count === 0;
+    cloudinaryDeleteSelectedButton.hidden = count === 0;
     cloudinaryDeleteSelectedButton.textContent = count ? `Delete Selected (${count})` : "Delete Selected";
   }
   if (cloudinaryDeleteSelectedMobileButton) {
     cloudinaryDeleteSelectedMobileButton.disabled = count === 0;
+    cloudinaryDeleteSelectedMobileButton.hidden = count === 0;
     cloudinaryDeleteSelectedMobileButton.textContent = count ? `Delete (${count})` : "Delete";
   }
   if (cloudinarySelectionBar) {
@@ -426,8 +439,14 @@ function updatePhotoSelectionDom() {
   updateDeleteSelectedButton();
 }
 
+function setSelectedCloudinaryFolder(folderName = "") {
+  selectedCloudinaryFolder = folderName || activeCloudinaryFolder || "darshan-magic/gallery";
+  renderCloudinaryFolderList(availableCloudinaryFolders);
+}
+
 function setActiveCloudinaryFolder(folderName = "") {
   activeCloudinaryFolder = folderName || "darshan-magic/gallery";
+  selectedCloudinaryFolder = activeCloudinaryFolder;
 
   if (cloudinaryActiveFolderLabel) {
     cloudinaryActiveFolderLabel.textContent = activeCloudinaryFolder;
@@ -469,7 +488,7 @@ function renderCloudinaryFolderList(folders = []) {
 
   const listMarkup = visibleFolders.length
     ? visibleFolders.map((folder) => `
-      <button class="upload-folder-item${folder === activeCloudinaryFolder ? " is-active" : ""}" type="button" data-folder="${escapeHtml(folder)}">
+      <button class="upload-folder-item${folder === activeCloudinaryFolder ? " is-active" : ""}${folder === selectedCloudinaryFolder ? " is-selected" : ""}" type="button" data-folder="${escapeHtml(folder)}">
         <span class="upload-folder-icon">Folder</span>
         <span class="upload-folder-name">${escapeHtml(folder)}</span>
       </button>
@@ -497,7 +516,22 @@ function renderCloudinaryFolderList(folders = []) {
   const bindFolderButtons = (root) => {
     if (!root) return;
     Array.from(root.querySelectorAll("[data-folder]")).forEach((button) => {
+      const folder = String(button.getAttribute("data-folder") || "").trim();
+      if (!folder) return;
+
+      if (root === cloudinaryFolderChipList || root === cloudinaryFolderSheetList || usesSingleTapFolderOpen()) {
+        button.addEventListener("click", () => {
+          loadCloudinaryFolderImages(folder);
+          closeCloudinaryFolderSheet();
+        });
+        return;
+      }
+
       button.addEventListener("click", () => {
+        setSelectedCloudinaryFolder(folder);
+      });
+
+      button.addEventListener("dblclick", () => {
         const folder = String(button.getAttribute("data-folder") || "").trim();
         if (folder) {
           loadCloudinaryFolderImages(folder);
@@ -1089,6 +1123,7 @@ if (cloudinaryExistingFolder) {
   cloudinaryExistingFolder.addEventListener("change", () => {
     const selectedFolder = String(cloudinaryExistingFolder.value || "").trim();
     if (selectedFolder) {
+      setSelectedCloudinaryFolder(selectedFolder);
       loadCloudinaryFolderImages(selectedFolder);
     }
   });
@@ -1312,6 +1347,8 @@ if (cloudinaryDropzone && cloudinaryExplorerUploadInput) {
     }
   });
 }
+
+updateDeleteSelectedButton();
 
 loadCloudinaryFolders().then(() => {
   if (cloudinaryUploadResults) {
