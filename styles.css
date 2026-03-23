@@ -1255,7 +1255,7 @@ body.menu-open .menu-toggle span:nth-child(3) {
   }
 
   .testimonial-stack-list .testimonial-card + .testimonial-card {
-    margin-top: -2.4rem;
+    margin-top: -0.9rem;
   }
 
   .testimonial-stack-list .testimonial-card:nth-child(1) { z-index: 1; }
