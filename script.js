@@ -3,6 +3,18 @@ const header = document.getElementById("site-header");
 const menuToggle = document.getElementById("menu-toggle");
 const navLinks = document.querySelectorAll(".site-nav a");
 const revealElements = document.querySelectorAll("[data-reveal]");
+let revealObserver = null;
+
+function registerRevealElement(element) {
+  if (!element) return;
+
+  if (revealObserver) {
+    revealObserver.observe(element);
+    return;
+  }
+
+  element.classList.add("is-visible");
+}
 
 function syncHeaderState() {
   if (!header) return;
@@ -29,7 +41,7 @@ navLinks.forEach((link) => {
 });
 
 if ("IntersectionObserver" in window) {
-  const revealObserver = new IntersectionObserver((entries) => {
+  revealObserver = new IntersectionObserver((entries) => {
     entries.forEach((entry) => {
       if (entry.isIntersecting) {
         entry.target.classList.add("is-visible");
@@ -39,10 +51,10 @@ if ("IntersectionObserver" in window) {
   }, { threshold: 0.16 });
 
   revealElements.forEach((element) => {
-    revealObserver.observe(element);
+    registerRevealElement(element);
   });
 } else {
-  revealElements.forEach((element) => element.classList.add("is-visible"));
+  revealElements.forEach((element) => registerRevealElement(element));
 }
 
 const countElements = document.querySelectorAll(".count-up");
@@ -171,6 +183,7 @@ function createGalleryCard(url, alt, isLarge) {
   image.src = url;
   image.alt = alt;
   figure.appendChild(image);
+  registerRevealElement(figure);
 
   return figure;
 }
