@@ -247,7 +247,7 @@ body.menu-open .menu-toggle span:nth-child(3) {
 .hero {
   position: relative;
   overflow: hidden;
-  padding: 2rem 0 5.5rem;
+  padding: 2rem 0 3rem;
   background:
     radial-gradient(circle at 18% 20%, rgba(201, 166, 107, 0.08), transparent 20%),
     radial-gradient(circle at 86% 28%, rgba(122, 52, 69, 0.22), transparent 26%),
@@ -485,6 +485,7 @@ body.menu-open .menu-toggle span:nth-child(3) {
 .about-copy {
   display: flex;
   flex-direction: column;
+  align-items: stretch;
 }
 
 .about-story-panel {
@@ -515,7 +516,8 @@ body.menu-open .menu-toggle span:nth-child(3) {
   grid-template-columns: repeat(2, minmax(0, 1fr));
   gap: 1rem;
   margin-top: 1rem;
-  max-width: 560px;
+  width: 100%;
+  max-width: none;
 }
 
 .about-point {
@@ -523,26 +525,38 @@ body.menu-open .menu-toggle span:nth-child(3) {
 }
 
 .about-point h3 {
-  margin: 0.2rem 0 0;
+  margin: 0.5rem 0 0;
   color: var(--text-on-light);
   font-size: 1.45rem;
   line-height: 1.15;
 }
 
 .about-stat {
-  display: block;
+  display: flex;
+  align-items: flex-start;
+  gap: 0.15rem;
   color: var(--accent);
   font-family: "Playfair Display", serif;
-  font-size: 4rem;
+  font-size: clamp(4.4rem, 7vw, 5.8rem);
   font-weight: 700;
-  line-height: 0.95;
+  line-height: 0.9;
+  white-space: nowrap;
+}
+
+.count-up {
+  display: inline-block;
+  font-size: inherit;
+  line-height: 0.9;
 }
 
 .about-stat-suffix {
-  font-size: 2rem;
+  display: inline-block;
+  font-size: clamp(2rem, 3vw, 2.6rem);
   font-family: "Inter", sans-serif;
   font-weight: 700;
   color: var(--accent);
+  line-height: 1;
+  transform: translateY(0.2rem);
 }
 
 .gallery-grid {
@@ -812,7 +826,7 @@ body.menu-open .menu-toggle span:nth-child(3) {
   }
 
   .hero {
-    padding-bottom: 4.5rem;
+    padding-bottom: 2.6rem;
   }
 
   .hero-grid {
@@ -954,6 +968,14 @@ body.menu-open .menu-toggle span:nth-child(3) {
 
   .about-photo-wrap {
     min-height: 0;
+  }
+
+  .about-stat {
+    font-size: clamp(3.9rem, 16vw, 5rem);
+  }
+
+  .about-stat-suffix {
+    font-size: clamp(1.8rem, 8vw, 2.4rem);
   }
 
   .testimonial-card {
