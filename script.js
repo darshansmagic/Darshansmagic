@@ -971,8 +971,9 @@ if (galleryStack) {
 
   function cycleGalleryStack() {
     if (stackCards.length < 2) return;
-    const [first, ...rest] = stackCards;
-    stackCards = [...rest, first];
+    const first = stackCards[0];
+    if (!first) return;
+    galleryStack.appendChild(first);
     renderGalleryStack();
   }
 
