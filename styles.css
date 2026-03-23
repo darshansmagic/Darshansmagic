@@ -1728,10 +1728,10 @@ body.admin-upload-page {
 }
 
 .admin-upload-page .button {
-  min-height: 44px;
-  padding: 0.8rem 1rem;
-  border-radius: 14px;
-  font-size: 0.8rem;
+  min-height: 36px;
+  padding: 0.56rem 0.78rem;
+  border-radius: 9px;
+  font-size: 0.74rem;
   letter-spacing: 0.04em;
   text-transform: none;
 }
@@ -1743,7 +1743,7 @@ body.admin-upload-page {
 
 .admin-upload-page .button-primary {
   background: #7a3445;
-  box-shadow: 0 10px 22px rgba(122, 52, 69, 0.16);
+  box-shadow: 0 8px 18px rgba(122, 52, 69, 0.14);
 }
 
 .admin-upload-page .button-secondary {
@@ -1782,8 +1782,8 @@ body.admin-upload-page {
   gap: 0.9rem;
   width: min(1120px, calc(100% - 1rem));
   margin: 0 auto;
-  min-height: 68px;
-  padding: 0.6rem 0;
+  min-height: 58px;
+  padding: 0.38rem 0;
 }
 
 .admin-brand {
@@ -1830,7 +1830,7 @@ body.admin-upload-page {
 .admin-main {
   width: min(1120px, calc(100% - 1rem));
   margin: 0 auto;
-  padding: 0.9rem 0 6rem;
+  padding: 0.62rem 0 5rem;
 }
 
 .admin-toolbar-card,
@@ -2095,7 +2095,7 @@ body.admin-upload-page {
 
 .admin-selection-copy strong {
   color: #fff;
-  font-size: 0.95rem;
+  font-size: 0.78rem;
 }
 
 .admin-selection-actions {
@@ -2292,16 +2292,18 @@ body.upload-modal-open {
 }
 
 .admin-upload-page .admin-folder-chip {
-  min-height: 34px;
-  padding: 0.52rem 0.8rem;
+  min-height: 28px;
+  padding: 0.26rem 0.56rem;
   background: #fff;
-  border-radius: 12px;
+  border-radius: 8px;
+  font-size: 0.72rem;
+  line-height: 1.1;
 }
 
 .admin-upload-page .admin-workspace {
   gap: 0;
   border: 1px solid rgba(47, 35, 39, 0.08);
-  border-radius: 20px;
+  border-radius: 16px;
   background: #fff;
   box-shadow: 0 12px 30px rgba(30, 18, 23, 0.05);
   overflow: hidden;
@@ -2328,19 +2330,20 @@ body.upload-modal-open {
   z-index: 1;
   background: #fff;
   margin: 0;
-  padding: 0.95rem 0.95rem 0.8rem;
+  padding: 0.78rem 0.8rem 0.62rem;
   border-bottom: 1px solid rgba(47, 35, 39, 0.06);
 }
 
 .admin-upload-page .admin-sidebar-title {
-  margin-bottom: 0.6rem;
+  margin-bottom: 0.45rem;
 }
 
 .admin-upload-page .admin-search input {
-  min-height: 38px;
-  border-radius: 10px;
+  min-height: 34px;
+  border-radius: 8px;
   background: #f7f4f2;
-  padding: 0.7rem 0.8rem;
+  padding: 0.56rem 0.72rem;
+  font-size: 0.82rem;
 }
 
 .admin-upload-page .admin-folder-list,
@@ -2352,14 +2355,14 @@ body.upload-modal-open {
   border: 0;
   border-bottom: 1px solid rgba(47, 35, 39, 0.06);
   border-radius: 0;
-  padding: 0.9rem 0.95rem;
+  padding: 0.62rem 0.78rem;
   background:
     linear-gradient(180deg, rgba(255,255,255,0.98), rgba(250,247,245,0.98));
   box-shadow: none;
   transform: none;
-  grid-template-columns: 44px minmax(0, 1fr);
+  grid-template-columns: 30px minmax(0, 1fr);
   align-items: center;
-  gap: 0.8rem;
+  gap: 0.58rem;
 }
 
 .admin-upload-page .upload-folder-item:hover,
@@ -2373,32 +2376,35 @@ body.upload-modal-open {
 .admin-upload-page .upload-folder-icon {
   display: grid;
   place-items: center;
-  width: 44px;
-  height: 34px;
-  border-radius: 10px 10px 8px 8px;
+  width: 30px;
+  height: 22px;
+  border-radius: 6px 6px 4px 4px;
   background:
-    linear-gradient(180deg, #f7d9c3 0%, #efc3a4 100%);
-  color: #8b4a2e;
-  font-size: 0.66rem;
-  letter-spacing: 0.06em;
+    linear-gradient(180deg, #e9d6cb 0%, #dec0b1 100%);
+  color: #6a4a52;
+  font-size: 0.52rem;
+  letter-spacing: 0.03em;
   position: relative;
 }
 
 .admin-upload-page .upload-folder-icon::before {
   content: "";
   position: absolute;
-  top: -6px;
-  left: 5px;
-  width: 18px;
-  height: 10px;
-  border-radius: 6px 6px 0 0;
-  background: #f3ceaf;
+  top: -3px;
+  left: 3px;
+  width: 11px;
+  height: 5px;
+  border-radius: 3px 3px 0 0;
+  background: #e1c7b9;
 }
 
 .admin-upload-page .upload-folder-name {
-  font-size: 0.88rem;
+  font-size: 0.79rem;
   font-weight: 600;
   color: #443338;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
 }
 
 .admin-upload-page .admin-content {
@@ -2408,8 +2414,8 @@ body.upload-modal-open {
 .admin-upload-page .admin-content-toolbar {
   display: flex;
   flex-direction: column;
-  gap: 0.9rem;
-  padding: 0.95rem;
+  gap: 0.65rem;
+  padding: 0.74rem 0.8rem;
   border-bottom: 1px solid rgba(47, 35, 39, 0.08);
 }
 
@@ -2418,20 +2424,23 @@ body.upload-modal-open {
 }
 
 .admin-upload-page .upload-folder-breadcrumbs {
-  margin-bottom: 0.3rem;
+  margin-bottom: 0.22rem;
 }
 
 .admin-upload-page .upload-breadcrumb {
-  padding: 0.24rem 0.55rem;
+  padding: 0.12rem 0.4rem;
   background: transparent;
   border: 1px solid rgba(47, 35, 39, 0.08);
   color: #6c545b;
+  border-radius: 6px;
+  font-size: 0.7rem;
+  line-height: 1.1;
 }
 
 .admin-upload-page .upload-folder-current {
   margin: 0;
   color: #22171a;
-  font-size: 0.98rem;
+  font-size: 0.88rem;
 }
 
 .admin-upload-page .upload-folder-current strong {
@@ -2440,13 +2449,14 @@ body.upload-modal-open {
 
 .admin-upload-page .upload-folder-meta {
   margin-top: 0.25rem;
-  font-size: 0.84rem;
+  font-size: 0.74rem;
+  color: #918087;
 }
 
 .admin-upload-page .admin-context-actions {
   display: grid;
   grid-template-columns: repeat(3, minmax(0, 1fr));
-  gap: 0.5rem;
+  gap: 0.38rem;
 }
 
 .admin-upload-page #cloudinary-upload-here {
@@ -2459,9 +2469,9 @@ body.upload-modal-open {
 
 .admin-upload-page .admin-upload-dropzone {
   margin: 0 0.95rem;
-  padding: 0.9rem;
+  padding: 0.62rem 0.76rem;
   border: 1px dashed rgba(122, 52, 69, 0.22);
-  border-radius: 14px;
+  border-radius: 10px;
   background: #fcfaf9;
 }
 
@@ -2475,21 +2485,23 @@ body.upload-modal-open {
 }
 
 .admin-upload-page .upload-result-empty {
-  padding: 0.95rem;
-  border-radius: 12px;
+  padding: 0.68rem;
+  border-radius: 9px;
   background: #faf7f5;
   border: 1px dashed rgba(47, 35, 39, 0.1);
   text-align: center;
+  font-size: 0.8rem;
 }
 
 .admin-upload-page .admin-selection-bar {
   left: 0.6rem;
   right: 0.6rem;
   bottom: 0.6rem;
-  gap: 0.6rem;
-  padding: 0.7rem;
-  background: rgba(35, 21, 27, 0.92);
-  border-radius: 16px;
+  gap: 0.42rem;
+  padding: 0.52rem;
+  background: rgba(35, 21, 27, 0.88);
+  border-radius: 10px;
+  box-shadow: 0 8px 18px rgba(18, 10, 16, 0.16);
 }
 
 .admin-upload-page .admin-selection-actions {
