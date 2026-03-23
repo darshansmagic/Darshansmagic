@@ -108,6 +108,7 @@ const cloudinaryUploadForm = document.getElementById("cloudinary-upload-form");
 const cloudinaryUploadStatus = document.getElementById("cloudinary-upload-status");
 const cloudinaryUploadResults = document.getElementById("cloudinary-upload-results");
 const cloudinaryExistingFolder = document.getElementById("cloudinary-existing-folder");
+const cloudinaryActiveFolderLabel = document.getElementById("cloudinary-active-folder");
 
 function setupTestimonialLoop() {
   if (!testimonialTrack) return;
@@ -276,6 +277,11 @@ function renderUploadResults(items) {
   `).join("");
 }
 
+function setActiveCloudinaryFolder(folderName = "") {
+  if (!cloudinaryActiveFolderLabel) return;
+  cloudinaryActiveFolderLabel.textContent = folderName || "darshan-magic/gallery";
+}
+
 async function getCloudinaryConfig() {
   const response = await fetch("/api/cloudinary-config", {
     headers: {
@@ -311,6 +317,31 @@ async function loadCloudinaryFolders() {
       .join("");
   } catch {
     // Keep fallback folder option if listing fails.
+  }
+}
+
+async function loadCloudinaryFolderImages(folderName) {
+  if (!cloudinaryUploadResults) return;
+
+  const normalizedFolder = normalizeCloudinaryFolder(folderName).publicIdPrefix;
+  setActiveCloudinaryFolder(normalizedFolder);
+  cloudinaryUploadResults.innerHTML = '<article class="upload-result-empty">Loading folder photos...</article>';
+
+  try {
+    const response = await fetch(`/api/cloudinary-folder-images?folder=${encodeURIComponent(normalizedFolder)}`, {
+      headers: {
+        Accept: "application/json"
+      }
+    });
+    const payload = await response.json().catch(() => ({}));
+
+    if (!response.ok || !Array.isArray(payload.images)) {
+      throw new Error(payload.error || "We could not load this folder right now.");
+    }
+
+    renderUploadResults(payload.images);
+  } catch (error) {
+    cloudinaryUploadResults.innerHTML = `<article class="upload-result-empty">${escapeHtml(error.message || "We could not load this folder right now.")}</article>`;
   }
 }
 
@@ -668,7 +699,13 @@ if (cloudinaryUploadForm) {
         uploaded.push(result);
       }
 
-      renderUploadResults(uploaded);
+      await loadCloudinaryFolders();
+      if (cloudinaryExistingFolder) {
+        const matchingOption = Array.from(cloudinaryExistingFolder.options).find((option) => option.value === folderName);
+        if (!matchingOption) {
+          cloudinaryExistingFolder.innerHTML += `<option value="${escapeHtml(folderName)}">${escapeHtml(folderName)}</option>`;
+        }
+      }
       cloudinaryUploadForm.reset();
       if (cloudinaryExistingFolder) {
         cloudinaryExistingFolder.value = folderName;
@@ -676,6 +713,7 @@ if (cloudinaryUploadForm) {
       if (newFolderNameInput) {
         newFolderNameInput.value = "";
       }
+      await loadCloudinaryFolderImages(folderName);
 
       if (cloudinaryUploadStatus) {
         cloudinaryUploadStatus.textContent = `${uploaded.length} photo${uploaded.length === 1 ? "" : "s"} uploaded successfully to ${folderName}.`;
@@ -695,7 +733,22 @@ if (cloudinaryUploadForm) {
   });
 }
 
-loadCloudinaryFolders();
+if (cloudinaryExistingFolder) {
+  cloudinaryExistingFolder.addEventListener("change", () => {
+    const selectedFolder = String(cloudinaryExistingFolder.value || "").trim();
+    if (selectedFolder) {
+      loadCloudinaryFolderImages(selectedFolder);
+    }
+  });
+}
+}
+
+loadCloudinaryFolders().then(() => {
+  if (cloudinaryUploadResults) {
+    const initialFolder = String(cloudinaryExistingFolder?.value || "darshan-magic/gallery").trim();
+    loadCloudinaryFolderImages(initialFolder);
+  }
+});
 loadGalleryImages().then(() => {
   if (galleryStack) {
     const resizeEvent = new Event("resize");
