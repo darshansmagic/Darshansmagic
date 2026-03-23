@@ -41,9 +41,9 @@
                 <h2>Upload performance photos from any device.</h2>
                 <p>Choose one or more photos, pick an existing folder or type a new event name, and upload them directly. This page is intended for admin use only.</p>
                 <div class="upload-note-list">
-                  <p>Supported flow: direct unsigned uploads through Cloudinary.</p>
+                  <p>Supported flow: signed admin uploads through Cloudinary.</p>
                   <p>If you type a plain event name like <strong>Birthday Party</strong>, it will upload to <strong>darshan-magic/events/birthday-party</strong>.</p>
-                  <p>Leave the new-folder field empty if you want to use the dropdown selection as-is.</p>
+                  <p>Leave the new-folder field empty if you want to use the selected folder from the explorer and dropdown as-is.</p>
                 </div>
               </div>
 
@@ -75,16 +75,39 @@
 
           <div class="upload-results-shell" data-reveal>
             <div class="section-intro upload-results-intro">
-              <p class="eyebrow">Folder Photos</p>
-              <h2>Photos in the selected Cloudinary folder.</h2>
-              <p>This admin-only view loads the actual contents of the chosen folder, including new uploads.</p>
-              <p class="upload-folder-current">Viewing folder: <strong id="cloudinary-active-folder">darshan-magic/gallery</strong></p>
+              <p class="eyebrow">Folder Explorer</p>
+              <h2>Browse folders and manage photos.</h2>
+              <p>This admin-only area works like a simple file explorer: choose a folder, upload into it, or delete selected photos.</p>
             </div>
 
-            <div class="upload-results-grid" id="cloudinary-upload-results">
-              <article class="upload-result-empty">
-                Loading folder photos...
-              </article>
+            <div class="upload-explorer-shell">
+              <aside class="upload-folder-pane">
+                <div class="upload-pane-header">
+                  <p class="upload-pane-label">Folders</p>
+                </div>
+                <div class="upload-folder-list" id="cloudinary-folder-list">
+                  <article class="upload-result-empty">Loading folders...</article>
+                </div>
+              </aside>
+
+              <div class="upload-files-pane">
+                <div class="upload-pane-header upload-pane-header-wide">
+                  <div>
+                    <p class="upload-pane-label">Selected Folder</p>
+                    <p class="upload-folder-current">Viewing folder: <strong id="cloudinary-active-folder">darshan-magic/gallery</strong></p>
+                  </div>
+                  <div class="upload-pane-actions">
+                    <button class="button button-secondary" id="cloudinary-use-folder" type="button">Upload To This Folder</button>
+                    <button class="button button-secondary" id="cloudinary-delete-selected" type="button" disabled>Delete Selected</button>
+                  </div>
+                </div>
+
+                <div class="upload-results-grid" id="cloudinary-upload-results">
+                  <article class="upload-result-empty">
+                    Loading folder photos...
+                  </article>
+                </div>
+              </div>
             </div>
           </div>
         </div>
