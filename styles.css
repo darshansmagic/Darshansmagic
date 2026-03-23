@@ -886,9 +886,9 @@ body.menu-open .menu-toggle span:nth-child(3) {
 }
 
 .thank-you-contact-copy {
-  max-width: 560px;
+  max-width: 100%;
   margin: 0 auto;
-  text-wrap: balance;
+  text-align: center;
 }
 
 .thank-you-actions {
