@@ -1033,18 +1033,6 @@ body.menu-open .menu-toggle span:nth-child(3) {
   color: #fdf8f2;
 }
 
-.footer-bottom {
-  margin-top: 1.4rem;
-  padding-top: 1rem;
-  display: flex;
-  justify-content: space-between;
-  gap: 1rem;
-  flex-wrap: wrap;
-  border-top: 1px solid rgba(245, 237, 231, 0.08);
-  color: rgba(245, 237, 231, 0.58);
-  font-size: 0.9rem;
-}
-
 [data-reveal] {
   opacity: 0;
   transform: translateY(26px);
@@ -1178,8 +1166,7 @@ body.menu-open .menu-toggle span:nth-child(3) {
     max-width: 100%;
   }
 
-  .hero-actions,
-  .footer-bottom {
+  .hero-actions {
     flex-direction: column;
     align-items: stretch;
   }
@@ -1350,9 +1337,4 @@ body.menu-open .menu-toggle span:nth-child(3) {
     line-height: 1.45;
   }
 
-  .footer-bottom {
-    margin-top: 1.2rem;
-    padding-top: 1rem;
-    font-size: 0.82rem;
-  }
 }
