@@ -91,6 +91,9 @@ const bookingForm = document.getElementById("booking-form");
 const bookingStatus = document.getElementById("booking-status");
 const testimonialForm = document.getElementById("testimonial-form");
 const testimonialStatus = document.getElementById("testimonial-status");
+const cloudinaryUploadForm = document.getElementById("cloudinary-upload-form");
+const cloudinaryUploadStatus = document.getElementById("cloudinary-upload-status");
+const cloudinaryUploadResults = document.getElementById("cloudinary-upload-results");
 
 function setupTestimonialLoop() {
   if (!testimonialTrack) return;
@@ -155,6 +158,76 @@ function createEmptyTestimonialCard(message) {
     event_type: "",
     rating: null
   });
+}
+
+function escapeHtml(value = "") {
+  return String(value)
+    .replace(/&/g, "&amp;")
+    .replace(/</g, "&lt;")
+    .replace(/>/g, "&gt;")
+    .replace(/"/g, "&quot;")
+    .replace(/'/g, "&#39;");
+}
+
+function renderUploadResults(items) {
+  if (!cloudinaryUploadResults) return;
+
+  if (!items.length) {
+    cloudinaryUploadResults.innerHTML = '<article class="upload-result-empty">Upload a photo and the preview cards will appear here.</article>';
+    return;
+  }
+
+  cloudinaryUploadResults.innerHTML = items.map((item) => `
+    <article class="upload-result-card">
+      <img class="upload-result-image" src="${escapeHtml(item.secure_url)}" alt="${escapeHtml(item.original_filename || "Uploaded photo")}">
+      <div class="upload-result-copy">
+        <strong>${escapeHtml(item.original_filename || "Uploaded photo")}</strong>
+        <a href="${escapeHtml(item.secure_url)}" target="_blank" rel="noreferrer">Open image</a>
+        <input class="upload-result-url" type="text" value="${escapeHtml(item.secure_url)}" readonly>
+      </div>
+    </article>
+  `).join("");
+}
+
+async function getCloudinaryConfig() {
+  const response = await fetch("/api/cloudinary-config", {
+    headers: {
+      Accept: "application/json"
+    }
+  });
+  const payload = await response.json().catch(() => ({}));
+
+  if (!response.ok || !payload.cloudName || !payload.uploadPreset) {
+    throw new Error(payload.error || "Missing Cloudinary configuration.");
+  }
+
+  return payload;
+}
+
+async function uploadSinglePhoto(file, config, eventName) {
+  const formData = new FormData();
+  formData.append("file", file);
+  formData.append("upload_preset", config.uploadPreset);
+  formData.append("folder", "darshan-magic");
+
+  const trimmedEvent = String(eventName || "").trim();
+  if (trimmedEvent) {
+    formData.append("tags", trimmedEvent.toLowerCase().replace(/\s+/g, "-"));
+    formData.append("context", `alt=${trimmedEvent}`);
+  }
+
+  const response = await fetch(`https://api.cloudinary.com/v1_1/${config.cloudName}/image/upload`, {
+    method: "POST",
+    body: formData
+  });
+
+  const payload = await response.json().catch(() => ({}));
+
+  if (!response.ok || !payload.secure_url) {
+    throw new Error(payload.error?.message || "Upload failed.");
+  }
+
+  return payload;
 }
 
 async function loadTestimonials() {
@@ -370,6 +443,64 @@ if (testimonialForm) {
       if (testimonialStatus) {
         testimonialStatus.textContent = error.message || "We could not send your testimonial right now. Please try again.";
         testimonialStatus.dataset.state = "error";
+      }
+    } finally {
+      if (submitButton) {
+        submitButton.disabled = false;
+        submitButton.textContent = originalButtonLabel;
+      }
+    }
+  });
+}
+
+if (cloudinaryUploadForm) {
+  cloudinaryUploadForm.addEventListener("submit", async (event) => {
+    event.preventDefault();
+
+    const submitButton = cloudinaryUploadForm.querySelector('button[type="submit"]');
+    const originalButtonLabel = submitButton ? submitButton.textContent : "";
+    const fileInput = cloudinaryUploadForm.querySelector('input[type="file"]');
+    const eventNameInput = cloudinaryUploadForm.querySelector('input[name="eventName"]');
+    const files = Array.from(fileInput?.files || []);
+
+    if (!files.length) {
+      if (cloudinaryUploadStatus) {
+        cloudinaryUploadStatus.textContent = "Please select at least one photo.";
+        cloudinaryUploadStatus.dataset.state = "error";
+      }
+      return;
+    }
+
+    if (cloudinaryUploadStatus) {
+      cloudinaryUploadStatus.textContent = "Uploading photos...";
+      cloudinaryUploadStatus.dataset.state = "";
+    }
+
+    if (submitButton) {
+      submitButton.disabled = true;
+      submitButton.textContent = "Uploading...";
+    }
+
+    try {
+      const config = await getCloudinaryConfig();
+      const uploaded = [];
+
+      for (const file of files) {
+        const result = await uploadSinglePhoto(file, config, eventNameInput?.value || "");
+        uploaded.push(result);
+      }
+
+      renderUploadResults(uploaded);
+      cloudinaryUploadForm.reset();
+
+      if (cloudinaryUploadStatus) {
+        cloudinaryUploadStatus.textContent = `${uploaded.length} photo${uploaded.length === 1 ? "" : "s"} uploaded successfully.`;
+        cloudinaryUploadStatus.dataset.state = "success";
+      }
+    } catch (error) {
+      if (cloudinaryUploadStatus) {
+        cloudinaryUploadStatus.textContent = error.message || "We could not upload your photos right now.";
+        cloudinaryUploadStatus.dataset.state = "error";
       }
     } finally {
       if (submitButton) {
