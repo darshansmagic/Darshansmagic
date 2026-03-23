@@ -152,6 +152,18 @@ span {
   background: rgba(255, 255, 255, 0.05);
 }
 
+.button-danger {
+  background: #8f3f4d;
+  color: #fff;
+  border-color: rgba(143, 63, 77, 0.3);
+}
+
+.button-danger:hover,
+.button-danger:focus-visible {
+  background: #7d3340;
+  border-color: rgba(125, 51, 64, 0.45);
+}
+
 .site-header {
   position: sticky;
   top: 0;
@@ -1005,17 +1017,63 @@ body.menu-open .menu-toggle span:nth-child(3) {
 }
 
 .upload-pane-actions .button {
-  min-width: 170px;
+  min-width: 142px;
+}
+
+.upload-pane-actions .button-secondary {
+  background: rgba(114, 55, 63, 0.08);
+  border-color: rgba(114, 55, 63, 0.16);
+  color: var(--accent-strong);
+}
+
+.upload-pane-actions .button-secondary:hover,
+.upload-pane-actions .button-secondary:focus-visible {
+  background: rgba(114, 55, 63, 0.14);
+  border-color: rgba(114, 55, 63, 0.24);
 }
 
 .upload-folder-current {
   margin-top: 0.65rem;
-  margin-bottom: 0;
+  margin-bottom: 0.4rem;
   color: var(--text-soft);
 }
 
 .upload-folder-current strong {
   color: var(--text-main);
+}
+
+.upload-folder-breadcrumbs {
+  display: flex;
+  align-items: center;
+  flex-wrap: wrap;
+  gap: 0.35rem;
+  margin-bottom: 0.45rem;
+}
+
+.upload-breadcrumb {
+  border: 0;
+  background: rgba(114, 55, 63, 0.1);
+  color: var(--accent-strong);
+  border-radius: 999px;
+  padding: 0.32rem 0.65rem;
+  font: inherit;
+  font-size: 0.82rem;
+  cursor: pointer;
+}
+
+.upload-breadcrumb:hover {
+  background: rgba(114, 55, 63, 0.16);
+}
+
+.upload-breadcrumb-sep {
+  color: var(--text-soft);
+  font-size: 0.84rem;
+}
+
+.upload-folder-meta {
+  margin: 0;
+  color: var(--text-soft);
+  font-size: 0.92rem;
 }
 
 .upload-folder-list {
@@ -1453,6 +1511,10 @@ body.menu-open .menu-toggle span:nth-child(3) {
 
   .upload-explorer-shell {
     grid-template-columns: 1fr;
+  }
+
+  .upload-pane-header-wide {
+    flex-direction: column;
   }
 
   .testimonial-stack-list {

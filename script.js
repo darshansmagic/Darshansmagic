@@ -111,7 +111,12 @@ const cloudinaryExistingFolder = document.getElementById("cloudinary-existing-fo
 const cloudinaryActiveFolderLabel = document.getElementById("cloudinary-active-folder");
 const cloudinaryFolderList = document.getElementById("cloudinary-folder-list");
 const cloudinaryDeleteSelectedButton = document.getElementById("cloudinary-delete-selected");
-const cloudinaryUseFolderButton = document.getElementById("cloudinary-use-folder");
+const cloudinaryUploadHereButton = document.getElementById("cloudinary-upload-here");
+const cloudinaryRefreshFolderButton = document.getElementById("cloudinary-refresh-folder");
+const cloudinaryCreateFolderButton = document.getElementById("cloudinary-create-folder");
+const cloudinaryExplorerUploadInput = document.getElementById("cloudinary-explorer-upload");
+const cloudinaryFolderBreadcrumbs = document.getElementById("cloudinary-folder-breadcrumbs");
+const cloudinaryFolderMeta = document.getElementById("cloudinary-folder-meta");
 const CLOUDINARY_FOLDER_STORAGE_KEY = "darshans-magic-active-folder";
 let availableCloudinaryFolders = [];
 let activeCloudinaryFolder = "darshan-magic/gallery";
@@ -273,6 +278,47 @@ function updateDeleteSelectedButton() {
   cloudinaryDeleteSelectedButton.textContent = count ? `Delete Selected (${count})` : "Delete Selected";
 }
 
+function setCloudinaryFolderMeta(message = "") {
+  if (!cloudinaryFolderMeta) return;
+  cloudinaryFolderMeta.textContent = message;
+}
+
+function renderCloudinaryBreadcrumbs(folderName = "") {
+  if (!cloudinaryFolderBreadcrumbs) return;
+
+  const parts = String(folderName || "").split("/").filter(Boolean);
+  if (!parts.length) {
+    cloudinaryFolderBreadcrumbs.innerHTML = "";
+    return;
+  }
+
+  let currentPath = "";
+  cloudinaryFolderBreadcrumbs.innerHTML = parts.map((part) => {
+    currentPath = currentPath ? `${currentPath}/${part}` : part;
+    return `<button class="upload-breadcrumb" type="button" data-folder="${escapeHtml(currentPath)}">${escapeHtml(part)}</button>`;
+  }).join('<span class="upload-breadcrumb-sep">/</span>');
+
+  Array.from(cloudinaryFolderBreadcrumbs.querySelectorAll("[data-folder]")).forEach((button) => {
+    button.addEventListener("click", () => {
+      const folder = String(button.getAttribute("data-folder") || "").trim();
+      if (folder) {
+        loadCloudinaryFolderImages(folder);
+      }
+    });
+  });
+}
+
+function syncCloudinaryFolderInputs(folderName = "") {
+  if (cloudinaryExistingFolder) {
+    const matchingOption = Array.from(cloudinaryExistingFolder.options).find((option) => option.value === folderName);
+    if (matchingOption) {
+      cloudinaryExistingFolder.value = folderName;
+    }
+  }
+
+  renderCloudinaryBreadcrumbs(folderName);
+}
+
 function renderUploadResults(items) {
   if (!cloudinaryUploadResults) return;
   selectedCloudinaryPublicIds = new Set();
@@ -319,12 +365,7 @@ function setActiveCloudinaryFolder(folderName = "") {
     cloudinaryActiveFolderLabel.textContent = activeCloudinaryFolder;
   }
 
-  if (cloudinaryExistingFolder) {
-    const matchingOption = Array.from(cloudinaryExistingFolder.options).find((option) => option.value === activeCloudinaryFolder);
-    if (matchingOption) {
-      cloudinaryExistingFolder.value = activeCloudinaryFolder;
-    }
-  }
+  syncCloudinaryFolderInputs(activeCloudinaryFolder);
 }
 
 function saveActiveCloudinaryFolder(folderName = "") {
@@ -360,6 +401,21 @@ function renderCloudinaryFolderList(folders = []) {
       }
     });
   });
+}
+
+function ensureCloudinaryFolderAvailable(folderName = "") {
+  const normalizedFolder = normalizeCloudinaryFolder(folderName).publicIdPrefix;
+  if (!normalizedFolder) return "";
+
+  const nextFolders = Array.from(new Set([...availableCloudinaryFolders, normalizedFolder])).sort((a, b) => a.localeCompare(b));
+  availableCloudinaryFolders = nextFolders;
+
+  if (cloudinaryExistingFolder && !Array.from(cloudinaryExistingFolder.options).some((option) => option.value === normalizedFolder)) {
+    cloudinaryExistingFolder.innerHTML += `<option value="${escapeHtml(normalizedFolder)}">${escapeHtml(normalizedFolder)}</option>`;
+  }
+
+  renderCloudinaryFolderList(availableCloudinaryFolders);
+  return normalizedFolder;
 }
 
 async function getCloudinaryConfig() {
@@ -429,6 +485,7 @@ async function loadCloudinaryFolderImages(folderName) {
   const normalizedFolder = normalizeCloudinaryFolder(folderName).publicIdPrefix;
   setActiveCloudinaryFolder(normalizedFolder);
   saveActiveCloudinaryFolder(normalizedFolder);
+  setCloudinaryFolderMeta("Loading folder contents...");
   renderCloudinaryFolderList(availableCloudinaryFolders);
   cloudinaryUploadResults.innerHTML = '<article class="upload-result-empty">Loading folder photos...</article>';
 
@@ -444,8 +501,10 @@ async function loadCloudinaryFolderImages(folderName) {
       throw new Error(payload.error || "We could not load this folder right now.");
     }
 
+    setCloudinaryFolderMeta(`${payload.images.length} photo${payload.images.length === 1 ? "" : "s"} in this folder.`);
     renderUploadResults(payload.images);
   } catch (error) {
+    setCloudinaryFolderMeta("We could not load this folder right now.");
     cloudinaryUploadResults.innerHTML = `<article class="upload-result-empty">${escapeHtml(error.message || "We could not load this folder right now.")}</article>`;
   }
 }
@@ -494,6 +553,41 @@ async function uploadSinglePhoto(file, config, folderName) {
   }
 
   return payload;
+}
+
+async function performCloudinaryUpload(files, folderName, options = {}) {
+  const uploadFiles = Array.from(files || []);
+  const normalizedFolder = ensureCloudinaryFolderAvailable(folderName);
+
+  if (!uploadFiles.length) {
+    throw new Error("Please select at least one photo.");
+  }
+
+  if (!normalizedFolder) {
+    throw new Error("Please choose or create a Cloudinary folder.");
+  }
+
+  const config = await getCloudinaryConfig();
+  const uploaded = [];
+
+  for (const file of uploadFiles) {
+    const result = await uploadSinglePhoto(file, config, normalizedFolder);
+    uploaded.push(result);
+  }
+
+  await loadCloudinaryFolders();
+  if (options.resetForm && cloudinaryUploadForm) {
+    cloudinaryUploadForm.reset();
+  }
+  if (cloudinaryExistingFolder) {
+    cloudinaryExistingFolder.value = normalizedFolder;
+  }
+  await loadCloudinaryFolderImages(normalizedFolder);
+
+  return {
+    uploaded,
+    folderName: normalizedFolder
+  };
 }
 
 async function loadTestimonials() {
@@ -787,22 +881,6 @@ if (cloudinaryUploadForm) {
     const normalizedFolder = normalizeCloudinaryFolder(requestedFolderName);
     const folderName = normalizedFolder.publicIdPrefix;
 
-    if (!files.length) {
-      if (cloudinaryUploadStatus) {
-        cloudinaryUploadStatus.textContent = "Please select at least one photo.";
-        cloudinaryUploadStatus.dataset.state = "error";
-      }
-      return;
-    }
-
-    if (!folderName) {
-      if (cloudinaryUploadStatus) {
-        cloudinaryUploadStatus.textContent = "Please choose or create a Cloudinary folder.";
-        cloudinaryUploadStatus.dataset.state = "error";
-      }
-      return;
-    }
-
     if (cloudinaryUploadStatus) {
       cloudinaryUploadStatus.textContent = "Uploading photos...";
       cloudinaryUploadStatus.dataset.state = "";
@@ -814,33 +892,13 @@ if (cloudinaryUploadForm) {
     }
 
     try {
-      const config = await getCloudinaryConfig();
-      const uploaded = [];
-
-      for (const file of files) {
-        const result = await uploadSinglePhoto(file, config, folderName);
-        uploaded.push(result);
-      }
-
-      await loadCloudinaryFolders();
-      if (cloudinaryExistingFolder) {
-        const matchingOption = Array.from(cloudinaryExistingFolder.options).find((option) => option.value === folderName);
-        if (!matchingOption) {
-          cloudinaryExistingFolder.innerHTML += `<option value="${escapeHtml(folderName)}">${escapeHtml(folderName)}</option>`;
-          availableCloudinaryFolders = Array.from(new Set([...availableCloudinaryFolders, folderName])).sort((a, b) => a.localeCompare(b));
-        }
-      }
-      cloudinaryUploadForm.reset();
-      if (cloudinaryExistingFolder) {
-        cloudinaryExistingFolder.value = folderName;
-      }
+      const result = await performCloudinaryUpload(files, folderName, { resetForm: true });
       if (newFolderNameInput) {
         newFolderNameInput.value = "";
       }
-      await loadCloudinaryFolderImages(folderName);
 
       if (cloudinaryUploadStatus) {
-        cloudinaryUploadStatus.textContent = `${uploaded.length} photo${uploaded.length === 1 ? "" : "s"} uploaded successfully to ${folderName}.`;
+        cloudinaryUploadStatus.textContent = `${result.uploaded.length} photo${result.uploaded.length === 1 ? "" : "s"} uploaded successfully to ${result.folderName}.`;
         cloudinaryUploadStatus.dataset.state = "success";
       }
     } catch (error) {
@@ -866,11 +924,77 @@ if (cloudinaryExistingFolder) {
   });
 }
 
-if (cloudinaryUseFolderButton) {
-  cloudinaryUseFolderButton.addEventListener("click", () => {
-    if (!cloudinaryExistingFolder || !activeCloudinaryFolder) return;
-    cloudinaryExistingFolder.value = activeCloudinaryFolder;
-    cloudinaryUploadForm?.scrollIntoView({ behavior: "smooth", block: "start" });
+if (cloudinaryUploadHereButton && cloudinaryExplorerUploadInput) {
+  cloudinaryUploadHereButton.addEventListener("click", () => {
+    cloudinaryExplorerUploadInput.click();
+  });
+}
+
+if (cloudinaryExplorerUploadInput) {
+  cloudinaryExplorerUploadInput.addEventListener("change", async () => {
+    const files = Array.from(cloudinaryExplorerUploadInput.files || []);
+    if (!files.length) return;
+
+    if (cloudinaryUploadStatus) {
+      cloudinaryUploadStatus.textContent = `Uploading photos to ${activeCloudinaryFolder}...`;
+      cloudinaryUploadStatus.dataset.state = "";
+    }
+
+    if (cloudinaryUploadHereButton) {
+      cloudinaryUploadHereButton.disabled = true;
+      cloudinaryUploadHereButton.textContent = "Uploading...";
+    }
+
+    try {
+      const result = await performCloudinaryUpload(files, activeCloudinaryFolder);
+      if (cloudinaryUploadStatus) {
+        cloudinaryUploadStatus.textContent = `${result.uploaded.length} photo${result.uploaded.length === 1 ? "" : "s"} uploaded successfully to ${result.folderName}.`;
+        cloudinaryUploadStatus.dataset.state = "success";
+      }
+    } catch (error) {
+      if (cloudinaryUploadStatus) {
+        cloudinaryUploadStatus.textContent = error.message || "We could not upload your photos right now.";
+        cloudinaryUploadStatus.dataset.state = "error";
+      }
+    } finally {
+      cloudinaryExplorerUploadInput.value = "";
+      if (cloudinaryUploadHereButton) {
+        cloudinaryUploadHereButton.disabled = false;
+        cloudinaryUploadHereButton.textContent = "Upload Here";
+      }
+    }
+  });
+}
+
+if (cloudinaryRefreshFolderButton) {
+  cloudinaryRefreshFolderButton.addEventListener("click", async () => {
+    setCloudinaryFolderMeta("Refreshing folder...");
+    try {
+      await loadCloudinaryFolders();
+      await loadCloudinaryFolderImages(activeCloudinaryFolder);
+    } catch (error) {
+      if (cloudinaryUploadStatus) {
+        cloudinaryUploadStatus.textContent = error.message || "We could not refresh this folder right now.";
+        cloudinaryUploadStatus.dataset.state = "error";
+      }
+    }
+  });
+}
+
+if (cloudinaryCreateFolderButton) {
+  cloudinaryCreateFolderButton.addEventListener("click", () => {
+    const folderName = typeof window !== "undefined" && window.prompt
+      ? window.prompt("Create a new folder. Enter a name like Birthday Party or a full path.")
+      : "";
+
+    const normalizedFolder = ensureCloudinaryFolderAvailable(folderName || "");
+    if (!normalizedFolder) return;
+
+    loadCloudinaryFolderImages(normalizedFolder);
+    if (cloudinaryUploadStatus) {
+      cloudinaryUploadStatus.textContent = `Folder ready: ${normalizedFolder}. Use Upload Here to add photos.`;
+      cloudinaryUploadStatus.dataset.state = "success";
+    }
   });
 }
 

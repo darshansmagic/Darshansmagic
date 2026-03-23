@@ -95,12 +95,18 @@
                   <div>
                     <p class="upload-pane-label">Selected Folder</p>
                     <p class="upload-folder-current">Viewing folder: <strong id="cloudinary-active-folder">darshan-magic/gallery</strong></p>
+                    <div class="upload-folder-breadcrumbs" id="cloudinary-folder-breadcrumbs"></div>
+                    <p class="upload-folder-meta" id="cloudinary-folder-meta">Loading folder contents...</p>
                   </div>
                   <div class="upload-pane-actions">
-                    <button class="button button-secondary" id="cloudinary-use-folder" type="button">Upload To This Folder</button>
-                    <button class="button button-secondary" id="cloudinary-delete-selected" type="button" disabled>Delete Selected</button>
+                    <button class="button button-secondary" id="cloudinary-refresh-folder" type="button">Refresh</button>
+                    <button class="button button-secondary" id="cloudinary-create-folder" type="button">New Folder</button>
+                    <button class="button button-primary" id="cloudinary-upload-here" type="button">Upload Here</button>
+                    <button class="button button-danger" id="cloudinary-delete-selected" type="button" disabled>Delete Selected</button>
                   </div>
                 </div>
+
+                <input id="cloudinary-explorer-upload" type="file" accept="image/*" multiple hidden>
 
                 <div class="upload-results-grid" id="cloudinary-upload-results">
                   <article class="upload-result-empty">
