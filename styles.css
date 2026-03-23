@@ -962,8 +962,8 @@ body.menu-open .menu-toggle span:nth-child(3) {
 
 .footer-grid {
   display: grid;
-  grid-template-columns: 1.05fr 0.72fr 0.72fr;
-  gap: 1rem;
+  grid-template-columns: minmax(0, 1fr) auto auto;
+  gap: 2.2rem;
   align-items: start;
 }
 
