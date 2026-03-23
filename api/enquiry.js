@@ -1,5 +1,6 @@
 const RESEND_API_URL = "https://api.resend.com/emails";
-const RECIPIENT_EMAIL = "vigneshk.com@gmail.com";
+const RECIPIENT_EMAIL = "darsaranya@gmail.com";
+const CC_EMAIL = "emaildarshan@gmail.com";
 const DEFAULT_FROM_EMAIL = "Darshan's Magic <onboarding@resend.dev>";
 
 function escapeHtml(value = "") {
@@ -61,6 +62,7 @@ module.exports = async function handler(req, res) {
     body: JSON.stringify({
       from: fromEmail,
       to: [RECIPIENT_EMAIL],
+      cc: [CC_EMAIL],
       reply_to: email,
       subject,
       html: `

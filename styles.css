@@ -884,6 +884,11 @@ body.menu-open .menu-toggle span:nth-child(3) {
   margin-top: 1rem;
 }
 
+.thank-you-contact-inline {
+  display: inline-block;
+  white-space: nowrap;
+}
+
 .thank-you-actions {
   justify-content: center;
   margin-top: 2rem;
