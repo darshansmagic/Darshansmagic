@@ -5,14 +5,14 @@ module.exports = async function handler(req, res) {
   }
 
   const cloudName = process.env.CLOUDINARY_CLOUD_NAME;
-  const uploadPreset = process.env.CLOUDINARY_UPLOAD_PRESET;
+  const apiKey = process.env.CLOUDINARY_API_KEY;
 
-  if (!cloudName || !uploadPreset) {
+  if (!cloudName || !apiKey) {
     return res.status(500).json({ error: "Missing Cloudinary environment variables." });
   }
 
   return res.status(200).json({
     cloudName,
-    uploadPreset
+    apiKey
   });
 };

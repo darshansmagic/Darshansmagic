@@ -290,8 +290,27 @@ async function getCloudinaryConfig() {
   });
   const payload = await response.json().catch(() => ({}));
 
-  if (!response.ok || !payload.cloudName || !payload.uploadPreset) {
+  if (!response.ok || !payload.cloudName || !payload.apiKey) {
     throw new Error(payload.error || "Missing Cloudinary configuration.");
+  }
+
+  return payload;
+}
+
+async function getCloudinaryUploadSignature(folderName) {
+  const normalizedFolder = normalizeCloudinaryFolder(folderName).publicIdPrefix;
+  const response = await fetch("/api/cloudinary-sign-upload", {
+    method: "POST",
+    headers: {
+      "Content-Type": "application/json",
+      Accept: "application/json"
+    },
+    body: JSON.stringify({ folderName: normalizedFolder })
+  });
+  const payload = await response.json().catch(() => ({}));
+
+  if (!response.ok || !payload.signature || !payload.timestamp || !payload.apiKey || !payload.cloudName) {
+    throw new Error(payload.error || "Missing Cloudinary upload signature.");
   }
 
   return payload;
@@ -347,17 +366,14 @@ async function loadCloudinaryFolderImages(folderName) {
 
 async function uploadSinglePhoto(file, config, folderName) {
   const formData = new FormData();
-  const normalizedFolder = normalizeCloudinaryFolder(folderName);
+  const signaturePayload = await getCloudinaryUploadSignature(folderName);
   formData.append("file", file);
-  formData.append("upload_preset", config.uploadPreset);
-  formData.append("asset_folder", normalizedFolder.assetFolder);
-  formData.append("public_id_prefix", normalizedFolder.publicIdPrefix);
-  formData.append("folder", normalizedFolder.publicIdPrefix);
-
-  const trimmedFolder = String(normalizedFolder.publicIdPrefix || "").trim();
-  if (trimmedFolder) {
-    formData.append("tags", trimmedFolder.toLowerCase().replace(/[^\w/-]+/g, "-"));
-  }
+  formData.append("api_key", config.apiKey);
+  formData.append("timestamp", String(signaturePayload.timestamp));
+  formData.append("signature", signaturePayload.signature);
+  formData.append("asset_folder", signaturePayload.assetFolder);
+  formData.append("public_id_prefix", signaturePayload.publicIdPrefix);
+  formData.append("tags", signaturePayload.tags);
 
   const response = await fetch(`https://api.cloudinary.com/v1_1/${config.cloudName}/image/upload`, {
     method: "POST",
