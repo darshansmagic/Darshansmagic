@@ -461,9 +461,11 @@ function syncRootLinksAndLists() {
 function setActiveCloudinaryFolder(folderName = "") {
   activeCloudinaryFolder = folderName || "darshan-magic/gallery";
   selectedCloudinaryFolder = activeCloudinaryFolder;
+  const activeFolderLabel = activeCloudinaryFolder.split("/").filter(Boolean).pop() || activeCloudinaryFolder;
 
   if (cloudinaryActiveFolderLabel) {
-    cloudinaryActiveFolderLabel.textContent = activeCloudinaryFolder;
+    cloudinaryActiveFolderLabel.textContent = activeFolderLabel;
+    cloudinaryActiveFolderLabel.setAttribute("title", activeCloudinaryFolder);
   }
 
   syncCloudinaryFolderInputs(activeCloudinaryFolder);

@@ -2650,3 +2650,230 @@ body.upload-modal-open {
     max-width: 520px;
   }
 }
+
+@media (max-width: 767px) {
+  .admin-upload-page .admin-topbar-main,
+  .admin-upload-page .admin-main {
+    width: calc(100% - 0.75rem);
+  }
+
+  .admin-upload-page .admin-topbar-main {
+    min-height: 52px;
+    padding: 0.28rem 0;
+    gap: 0.6rem;
+  }
+
+  .admin-upload-page .admin-brand {
+    gap: 0.55rem;
+  }
+
+  .admin-upload-page .admin-brand-logo {
+    width: 32px;
+    height: 32px;
+    border-radius: 8px;
+  }
+
+  .admin-upload-page .admin-brand-copy strong {
+    font-size: 0.92rem;
+  }
+
+  .admin-upload-page .admin-brand-copy span {
+    display: none;
+  }
+
+  .admin-upload-page .admin-topbar-actions {
+    gap: 0.38rem;
+  }
+
+  .admin-upload-page .button {
+    min-height: 34px;
+    padding: 0.46rem 0.7rem;
+    border-radius: 8px;
+    font-size: 0.72rem;
+  }
+
+  .admin-upload-page .admin-icon-button {
+    padding-inline: 0.64rem;
+  }
+
+  .admin-upload-page .admin-main {
+    padding: 0.42rem 0 4.1rem;
+  }
+
+  .admin-upload-page .admin-folder-strip {
+    padding: 0.05rem 0 0.42rem;
+  }
+
+  .admin-upload-page .admin-folder-chips {
+    gap: 0.38rem;
+  }
+
+  .admin-upload-page .admin-folder-chip {
+    min-height: 30px;
+    padding: 0.16rem 0.5rem;
+    border-radius: 7px;
+    font-size: 0.7rem;
+  }
+
+  .admin-upload-page .admin-workspace {
+    margin-top: 0.45rem;
+    border-radius: 12px;
+  }
+
+  .admin-upload-page .admin-content-toolbar {
+    padding: 0.68rem 0.72rem 0.62rem;
+    gap: 0.45rem;
+  }
+
+  .admin-upload-page .admin-context-copy .admin-section-label {
+    display: none;
+  }
+
+  .admin-upload-page .upload-folder-breadcrumbs {
+    display: flex;
+    gap: 0.22rem;
+    overflow-x: auto;
+    white-space: nowrap;
+    margin-bottom: 0.16rem;
+    padding-bottom: 0.04rem;
+    scrollbar-width: none;
+  }
+
+  .admin-upload-page .upload-folder-breadcrumbs::-webkit-scrollbar {
+    display: none;
+  }
+
+  .admin-upload-page .upload-breadcrumb {
+    padding: 0.1rem 0.32rem;
+    border-radius: 5px;
+    font-size: 0.66rem;
+  }
+
+  .admin-upload-page .upload-breadcrumb-sep {
+    font-size: 0.7rem;
+    color: #b3a0a6;
+  }
+
+  .admin-upload-page .upload-folder-current {
+    margin-top: 0;
+    font-size: 0.8rem;
+    line-height: 1.2;
+  }
+
+  .admin-upload-page .upload-folder-current strong {
+    display: block;
+    font-size: 1rem;
+    white-space: nowrap;
+    overflow: hidden;
+    text-overflow: ellipsis;
+  }
+
+  .admin-upload-page .upload-folder-meta {
+    margin-top: 0.14rem;
+    font-size: 0.72rem;
+  }
+
+  .admin-upload-page .admin-context-actions {
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+    gap: 0.34rem;
+  }
+
+  .admin-upload-page .admin-context-actions .button {
+    min-height: 34px;
+  }
+
+  .admin-upload-page .admin-content-body {
+    gap: 0.52rem;
+    padding-bottom: 0.78rem;
+  }
+
+  .admin-upload-page .admin-upload-panel {
+    padding: 0 0.72rem;
+  }
+
+  .admin-upload-page .admin-upload-dropzone {
+    margin: 0;
+    min-height: 82px;
+    grid-template-columns: 40px minmax(0, 1fr);
+    justify-items: start;
+    align-items: center;
+    gap: 0.55rem;
+    padding: 0.68rem 0.72rem;
+    text-align: left;
+    border-radius: 10px;
+  }
+
+  .admin-upload-page .admin-upload-dropzone-icon {
+    width: 40px;
+    height: 40px;
+    border-radius: 12px;
+    font-size: 1.3rem;
+  }
+
+  .admin-upload-page .admin-upload-dropzone-copy {
+    text-align: left;
+  }
+
+  .admin-upload-page .admin-upload-dropzone-copy strong {
+    font-size: 0.9rem;
+  }
+
+  .admin-upload-page .admin-upload-dropzone-copy span {
+    font-size: 0.74rem;
+  }
+
+  .admin-upload-page .admin-grid-panel {
+    padding: 0.8rem 0.72rem 0.85rem;
+  }
+
+  .admin-upload-page .admin-grid-header {
+    padding: 0 0.1rem 0.45rem;
+  }
+
+  .admin-upload-page .admin-photo-grid {
+    gap: 0.55rem;
+  }
+
+  .admin-upload-page .upload-result-empty {
+    padding: 0.72rem;
+    border-radius: 10px;
+    font-size: 0.76rem;
+  }
+
+  .admin-upload-page .upload-result-card {
+    border-radius: 10px;
+  }
+
+  .admin-upload-page .upload-result-select {
+    top: 0.42rem;
+    left: 0.42rem;
+    padding: 0.22rem 0.42rem;
+    font-size: 0.72rem;
+  }
+
+  .admin-upload-page .upload-result-copy {
+    padding: 0.48rem 0.54rem 0.56rem;
+  }
+
+  .admin-upload-page .upload-result-copy span {
+    font-size: 0.75rem;
+  }
+
+  .admin-upload-page .admin-selection-bar {
+    left: 0.5rem;
+    right: 0.5rem;
+    bottom: 0.5rem;
+    gap: 0.36rem;
+    padding: 0.46rem;
+    border-radius: 9px;
+    box-shadow: 0 10px 24px rgba(18, 10, 16, 0.2);
+  }
+
+  .admin-upload-page .admin-selection-copy strong {
+    font-size: 0.74rem;
+  }
+
+  .admin-upload-page .admin-selection-actions {
+    gap: 0.3rem;
+  }
+}
