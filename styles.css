@@ -845,6 +845,21 @@ body.menu-open .menu-toggle span:nth-child(3) {
   margin-top: 1rem;
 }
 
+.booking-status {
+  min-height: 1.4rem;
+  margin-top: 0.85rem;
+  color: rgba(245, 237, 231, 0.78);
+  font-size: 0.92rem;
+}
+
+.booking-status[data-state="success"] {
+  color: #d8c7a0;
+}
+
+.booking-status[data-state="error"] {
+  color: #f0b8b8;
+}
+
 .site-footer {
   margin-top: 1rem;
   padding: 2.75rem 0 1.4rem;
@@ -1111,7 +1126,7 @@ body.menu-open .menu-toggle span:nth-child(3) {
   }
 
   .footer-grid {
-    grid-template-columns: 0.9fr 1fr 1fr;
+    grid-template-columns: 0.9fr 1.1fr;
     gap: 0.9rem;
   }
 
@@ -1121,6 +1136,10 @@ body.menu-open .menu-toggle span:nth-child(3) {
   }
 
   .footer-brand p {
+    display: none;
+  }
+
+  .footer-grid > .footer-column:first-of-type {
     display: none;
   }
 

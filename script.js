@@ -97,6 +97,8 @@ if (testimonialTrack && !testimonialTrack.dataset.loopReady) {
 }
 
 const galleryStack = document.getElementById("gallery-stack");
+const bookingForm = document.getElementById("booking-form");
+const bookingStatus = document.getElementById("booking-status");
 
 if (galleryStack) {
   let stackCards = Array.from(galleryStack.children);
@@ -171,4 +173,57 @@ if (galleryStack) {
 
   renderGalleryStack();
   startGalleryAutoplay();
+}
+
+if (bookingForm) {
+  bookingForm.addEventListener("submit", async (event) => {
+    event.preventDefault();
+
+    const submitButton = bookingForm.querySelector('button[type="submit"]');
+    const originalButtonLabel = submitButton ? submitButton.textContent : "";
+    const formData = new FormData(bookingForm);
+
+    if (bookingStatus) {
+      bookingStatus.textContent = "Sending your enquiry...";
+      bookingStatus.dataset.state = "";
+    }
+
+    if (submitButton) {
+      submitButton.disabled = true;
+      submitButton.textContent = "Sending...";
+    }
+
+    try {
+      const response = await fetch(bookingForm.action, {
+        method: "POST",
+        headers: {
+          "Content-Type": "application/json"
+        },
+        body: JSON.stringify(Object.fromEntries(formData.entries()))
+      });
+
+      const payload = await response.json().catch(() => ({}));
+
+      if (!response.ok) {
+        throw new Error(payload.error || "Something went wrong.");
+      }
+
+      bookingForm.reset();
+
+      if (bookingStatus) {
+        bookingStatus.textContent = "Thanks. Your enquiry has been sent and we will get back to you soon.";
+        bookingStatus.dataset.state = "success";
+      }
+    } catch (error) {
+      if (bookingStatus) {
+        bookingStatus.textContent = error.message || "We could not send your enquiry right now. Please try again.";
+        bookingStatus.dataset.state = "error";
+      }
+    } finally {
+      if (submitButton) {
+        submitButton.disabled = false;
+        submitButton.textContent = originalButtonLabel;
+      }
+    }
+  });
 }
